@@ -16,7 +16,7 @@
         android:theme="@style/Theme.EnglishMemory"
         tools:targetApi="34">
         <activity
-            android:name=".MainActivity"
+            android:name=".presentation.MainActivity"
             tools:ignore="LockedOrientationActivity"
             android:screenOrientation="sensorPortrait"
             android:exported="true"

@@ -1,4 +1,4 @@
-package jp.developer.bbee.englishmemory.ui.theme
+package jp.developer.bbee.englishmemory.presentation.ui.theme
 
 import android.app.Activity
 import android.os.Build

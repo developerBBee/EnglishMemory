@@ -1,4 +1,4 @@
-package jp.developer.bbee.englishmemory.ui.theme
+package jp.developer.bbee.englishmemory.presentation.ui.theme
 
 import androidx.compose.ui.graphics.Color
 
