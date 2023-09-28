@@ -7,15 +7,16 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
+import javax.inject.Inject
 
-class GetTranslateDataUseCase(
+class GetTranslateDataUseCase @Inject constructor(
     private val repository: TranslateRepository
 ) {
-    operator fun invoke(): Flow<NetworkResponse<TranslateDataDto>> = flow {
+    operator fun invoke(token: String): Flow<NetworkResponse<TranslateDataDto>> = flow {
         try {
             emit(NetworkResponse.Loading())
             val result = withContext(Dispatchers.IO) {
-                repository.getTranslateData()
+                repository.getTranslateData(token)
             }
             emit(NetworkResponse.Success(result))
         } catch (e: Exception) {
