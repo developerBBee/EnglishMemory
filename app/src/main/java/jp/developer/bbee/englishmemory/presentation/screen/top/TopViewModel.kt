@@ -4,17 +4,20 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import jp.developer.bbee.englishmemory.common.response.NetworkResponse
-import jp.developer.bbee.englishmemory.data.source.remote.dto.TranslateDataDto
+import jp.developer.bbee.englishmemory.common.response.Response
+import jp.developer.bbee.englishmemory.domain.model.TranslateData
+import jp.developer.bbee.englishmemory.domain.usecase.GetTranslateDataFromDbUseCase
 import jp.developer.bbee.englishmemory.domain.usecase.GetTranslateDataUseCase
+import jp.developer.bbee.englishmemory.domain.usecase.SaveTranslateDataUseCase
 import jp.developer.bbee.englishmemory.service.AccountService
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
 data class TopState(
-    val translateData: TranslateDataDto? = null,
+    val translateData: List<TranslateData>? = null,
     val isLoading: Boolean = false,
     val error: String? = null,
 )
@@ -22,6 +25,8 @@ data class TopState(
 @HiltViewModel
 class TopViewModel @Inject constructor(
     private val getTranslateDataUseCase: GetTranslateDataUseCase,
+    private val saveTranslateDataUseCase: SaveTranslateDataUseCase,
+    private val getTranslateDataFromDbUseCase: GetTranslateDataFromDbUseCase,
     private val accountService: AccountService,
 ) : ViewModel() {
     private var _state = mutableStateOf(TopState())
@@ -34,18 +39,36 @@ class TopViewModel @Inject constructor(
             }
             accountService.useTokenCallApi { token ->
                 getTranslateDataUseCase(token).onEach { response ->
-                    when (response) {
-                        is NetworkResponse.Loading -> {
-                            _state.value = TopState(isLoading = true)
-                        }
-                        is NetworkResponse.Success -> {
-                            _state.value = TopState(translateData = response.data)
-                        }
-                        is NetworkResponse.Failure -> {
-                            _state.value = TopState(error = response.error)
-                        }
-                    }
+                    processTranslateDataResponse(response)
                 }.launchIn(viewModelScope)
+            }
+        }
+    }
+
+    fun save() {
+        viewModelScope.launch {
+            saveTranslateDataUseCase(state.value.translateData ?: emptyList())
+        }
+    }
+
+    fun load() {
+        getTranslateDataFromDbUseCase().onEach { response ->
+            processTranslateDataResponse(response)
+        }.launchIn(viewModelScope)
+    }
+
+    private fun processTranslateDataResponse(
+        response: Response<List<TranslateData>>
+    ) {
+        when (response) {
+            is Response.Loading -> {
+                _state.value = TopState(isLoading = true)
+            }
+            is Response.Success -> {
+                _state.value = TopState(translateData = response.data)
+            }
+            is Response.Failure -> {
+                _state.value = TopState(error = response.error)
             }
         }
     }
