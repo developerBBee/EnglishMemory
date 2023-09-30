@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -26,17 +25,16 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import jp.developer.bbee.englishmemory.domain.model.TranslateData
+import jp.developer.bbee.englishmemory.presentation.ui.theme.AppTheme
+
+const val DEBUG = false
 
 @Composable
 fun TopScreen(
     viewModel: TopViewModel = hiltViewModel(),
 ) {
-    val DEBUG = false
-
     val state = viewModel.state.value
     val dataList = viewModel.state.value.translateData
 
@@ -55,7 +53,7 @@ fun TopScreen(
                     Image(
                         // 仮置き
                         imageVector = Icons.Default.Face,
-                        modifier = Modifier.size(1280.dp),
+                        modifier = Modifier.fillMaxSize(),
                         contentDescription = "Provisional image",
                         contentScale = ContentScale.Fit
                     )
@@ -70,13 +68,13 @@ fun TopScreen(
                     TextButton(onClick = { /*TODO*/ }) {
                         Text(
                             text = "Start",
-                            fontSize = 48.sp,
+                            style = MaterialTheme.typography.headlineLarge,
                         )
                     }
                     TextButton(onClick = { /*TODO*/ }) {
                         Text(
                             text = "Setting",
-                            fontSize = 48.sp,
+                            style = MaterialTheme.typography.headlineLarge,
                         )
                     }
                 }
@@ -95,20 +93,23 @@ fun DebugView(
         (dataList != null) -> {
             Column(modifier = Modifier.fillMaxSize()) {
                 Row(
-                    modifier = Modifier.fillMaxWidth(),
+                    modifier = Modifier.fillMaxWidth().padding(AppTheme.dimens.small),
                     horizontalArrangement = Arrangement.Center,
                 ) {
                     Button(onClick = { viewModel.save() }) {
                         Text(text = "Save")
                     }
-                    Spacer(modifier = Modifier.padding(16.dp))
+                    Spacer(modifier = Modifier.padding(AppTheme.dimens.medium))
                     Button(onClick = { viewModel.load() }) {
                         Text(text = "Load")
                     }
                 }
-                LazyColumn(modifier = Modifier.padding(16.dp)) {
+                LazyColumn(modifier = Modifier.padding(AppTheme.dimens.medium)) {
                     items(dataList) { data ->
-                        Text(text = data.english + " : " + data.translateToJapanese)
+                        Text(
+                            text = "${data.english} : ${data.translateToJapanese}",
+                            style = MaterialTheme.typography.bodyMedium,
+                        )
                     }
                 }
             }

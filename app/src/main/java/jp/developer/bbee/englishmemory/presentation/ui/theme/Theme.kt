@@ -11,6 +11,7 @@ import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalConfiguration
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
@@ -62,9 +63,20 @@ fun EnglishMemoryTheme(
         }
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    val config = LocalConfiguration.current
+    val isPhone = config.smallestScreenWidthDp < 600
+
+    AppUtils(dimensions = if (isPhone) phoneDimensions else tabletDimensions) {
+        MaterialTheme(
+            colorScheme = colorScheme,
+            typography = if (isPhone) phoneTypography else tabletTypography,
+            content = content
+        )
+    }
+}
+
+object AppTheme {
+    val dimens: Dimensions
+        @Composable
+        get() = LocalAppDimens.current
 }
