@@ -21,22 +21,24 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.material3.TextField
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import jp.developer.bbee.englishmemory.domain.model.TranslateData
 import jp.developer.bbee.englishmemory.presentation.ui.theme.AppTheme
 
-const val DEBUG = false
+const val DEBUG = true
 
 @Composable
 fun TopScreen(
     viewModel: TopViewModel = hiltViewModel(),
 ) {
-    val state = viewModel.state.value
-    val dataList = viewModel.state.value.translateData
+    val state by viewModel.state.collectAsStateWithLifecycle()
+    val dataList = state.translateData
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (DEBUG) {

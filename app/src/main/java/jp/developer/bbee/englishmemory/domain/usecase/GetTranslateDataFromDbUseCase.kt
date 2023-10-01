@@ -9,10 +9,10 @@ import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class GetTranslateDataFromDbUseCase @Inject constructor(
+open class GetTranslateDataFromDbUseCase @Inject constructor(
     private val repository: TranslateRepository
 ) {
-    operator fun invoke(): Flow<Response<List<TranslateData>>> = flow {
+    open operator fun invoke(): Flow<Response<List<TranslateData>>> = flow {
         try {
             emit(Response.Loading())
             val result = withContext(Dispatchers.IO) {

@@ -1,6 +1,5 @@
 package jp.developer.bbee.englishmemory.presentation.screen.top
 
-import androidx.compose.runtime.mutableStateOf
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -10,7 +9,8 @@ import jp.developer.bbee.englishmemory.domain.usecase.GetTranslateDataFromDbUseC
 import jp.developer.bbee.englishmemory.domain.usecase.GetTranslateDataUseCase
 import jp.developer.bbee.englishmemory.domain.usecase.SaveTranslateDataUseCase
 import jp.developer.bbee.englishmemory.service.AccountService
-import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -29,8 +29,8 @@ class TopViewModel @Inject constructor(
     private val getTranslateDataFromDbUseCase: GetTranslateDataFromDbUseCase,
     private val accountService: AccountService,
 ) : ViewModel() {
-    private var _state = mutableStateOf(TopState())
-    val state = _state
+    private var _state = MutableStateFlow(TopState())
+    val state = _state.asStateFlow()
 
     init {
         viewModelScope.launch {
@@ -39,15 +39,17 @@ class TopViewModel @Inject constructor(
             }
             accountService.useTokenCallApi { token ->
                 getTranslateDataUseCase(token).onEach { response ->
-                    processTranslateDataResponse(response)
+                    processTranslateDataResponse(response) {
+                        save(it)
+                    }
                 }.launchIn(viewModelScope)
             }
         }
     }
 
-    fun save() {
+    fun save(translateData: List<TranslateData>? = _state.value.translateData) {
         viewModelScope.launch {
-            saveTranslateDataUseCase(state.value.translateData ?: emptyList())
+            saveTranslateDataUseCase(translateData ?: emptyList())
         }
     }
 
@@ -58,13 +60,15 @@ class TopViewModel @Inject constructor(
     }
 
     private fun processTranslateDataResponse(
-        response: Response<List<TranslateData>>
+        response: Response<List<TranslateData>>,
+        saveSuccessData: (List<TranslateData>?) -> Unit = {},
     ) {
         when (response) {
             is Response.Loading -> {
                 _state.value = TopState(isLoading = true)
             }
             is Response.Success -> {
+                saveSuccessData(response.data)
                 _state.value = TopState(translateData = response.data)
             }
             is Response.Failure -> {

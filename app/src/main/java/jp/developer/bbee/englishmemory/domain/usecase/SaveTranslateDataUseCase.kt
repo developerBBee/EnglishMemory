@@ -6,10 +6,10 @@ import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class SaveTranslateDataUseCase @Inject constructor(
+open class SaveTranslateDataUseCase @Inject constructor(
     private val repository: TranslateRepository
 ) {
-    suspend operator fun invoke(data: List<TranslateData>) {
+    open suspend operator fun invoke(data: List<TranslateData>) {
         withContext(Dispatchers.IO) {
             repository.saveTranslateData(data)
         }
