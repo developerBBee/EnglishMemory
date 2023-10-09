@@ -2,10 +2,10 @@ package jp.developer.bbee.englishmemory.data.repository
 
 import jp.developer.bbee.englishmemory.data.source.local.EnglishMemoryDao
 import jp.developer.bbee.englishmemory.data.source.remote.api.AwsApi
-import jp.developer.bbee.englishmemory.data.source.remote.dto.TranslateDataDto
+import jp.developer.bbee.englishmemory.domain.model.StudyData
+import jp.developer.bbee.englishmemory.domain.model.StudyStatus
 import jp.developer.bbee.englishmemory.domain.model.TranslateData
 import jp.developer.bbee.englishmemory.domain.repository.TranslateRepository
-import kotlinx.coroutines.flow.Flow
 import javax.inject.Inject
 
 class TranslateRepositoryImpl @Inject constructor(
@@ -22,5 +22,13 @@ class TranslateRepositoryImpl @Inject constructor(
 
     override suspend fun saveTranslateData(translateDataList: List<TranslateData>) {
         dao.insertUpdateTranslateData(translateDataList)
+    }
+
+    override suspend fun getStudyData(): List<StudyData> {
+        return dao.getStudyData()
+    }
+
+    override suspend fun updateStudyStatus(studyStatus: StudyStatus) {
+        dao.insertUpdateStudyStatus(studyStatus)
     }
 }

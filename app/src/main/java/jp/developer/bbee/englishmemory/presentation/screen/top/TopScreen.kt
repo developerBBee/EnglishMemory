@@ -14,6 +14,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Face
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
@@ -28,17 +29,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.navigation.NavController
 import jp.developer.bbee.englishmemory.domain.model.TranslateData
+import jp.developer.bbee.englishmemory.presentation.ScreenRoute.StartApp
+import jp.developer.bbee.englishmemory.presentation.ScreenRoute.StudyScreen
 import jp.developer.bbee.englishmemory.presentation.ui.theme.AppTheme
 
-const val DEBUG = true
+const val DEBUG = false
 
 @Composable
 fun TopScreen(
+    navController: NavController,
     viewModel: TopViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
     val dataList = state.translateData
+    val errorMessage = state.error
 
     Box(modifier = Modifier.fillMaxSize()) {
         if (DEBUG) {
@@ -67,19 +73,43 @@ fun TopScreen(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                 ) {
-                    TextButton(onClick = { /*TODO*/ }) {
+                    TextButton(
+                        enabled = viewModel.isReady,
+                        onClick = { navController.navigate(StudyScreen.route) }
+                    ) {
                         Text(
                             text = "Start",
                             style = MaterialTheme.typography.headlineLarge,
                         )
                     }
-                    TextButton(onClick = { /*TODO*/ }) {
+                    TextButton(
+                        enabled = viewModel.isReady,
+                        onClick = { /*TODO*/ }
+                    ) {
                         Text(
                             text = "Setting",
                             style = MaterialTheme.typography.headlineLarge,
                         )
                     }
                 }
+            }
+            if (viewModel.isRestart) {
+                navController.navigate(StartApp.route) {
+                    popUpTo(navController.graph.id) {
+                        inclusive = true
+                    }
+                }
+            } else if (!errorMessage.isNullOrBlank()) {
+                AlertDialog(
+                    onDismissRequest = {},
+                    confirmButton = {
+                        TextButton(
+                            onClick = { viewModel.restart() }) {
+                            Text(text = "再起動")
+                        }
+                    },
+                    text = { Text(text = errorMessage) }
+                )
             }
         }
     }
@@ -92,10 +122,24 @@ fun DebugView(
     viewModel: TopViewModel,
 ) {
     when {
+        state.isLoading -> {
+            Box(modifier = Modifier.fillMaxSize()) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+        }
+        !state.error.isNullOrBlank() -> {
+            TextField(
+                value = state.error,
+                onValueChange = {},
+                textStyle = MaterialTheme.typography.bodyLarge,
+            )
+        }
         (dataList != null) -> {
             Column(modifier = Modifier.fillMaxSize()) {
                 Row(
-                    modifier = Modifier.fillMaxWidth().padding(AppTheme.dimens.small),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(AppTheme.dimens.small),
                     horizontalArrangement = Arrangement.Center,
                 ) {
                     Button(onClick = { viewModel.save() }) {
@@ -114,18 +158,6 @@ fun DebugView(
                         )
                     }
                 }
-            }
-        }
-        !state.error.isNullOrBlank() -> {
-            TextField(
-                value = state.error,
-                onValueChange = {},
-                textStyle = MaterialTheme.typography.bodyLarge,
-            )
-        }
-        else -> {
-            Box(modifier = Modifier.fillMaxSize()) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
         }
     }

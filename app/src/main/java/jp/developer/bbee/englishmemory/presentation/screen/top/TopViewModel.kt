@@ -1,9 +1,12 @@
 package jp.developer.bbee.englishmemory.presentation.screen.top
 
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import jp.developer.bbee.englishmemory.common.response.Response
+import jp.developer.bbee.englishmemory.common.response.Async
 import jp.developer.bbee.englishmemory.domain.model.TranslateData
 import jp.developer.bbee.englishmemory.domain.usecase.GetTranslateDataFromDbUseCase
 import jp.developer.bbee.englishmemory.domain.usecase.GetTranslateDataUseCase
@@ -29,20 +32,28 @@ class TopViewModel @Inject constructor(
     private val getTranslateDataFromDbUseCase: GetTranslateDataFromDbUseCase,
     private val accountService: AccountService,
 ) : ViewModel() {
-    private var _state = MutableStateFlow(TopState())
+    private var _state = MutableStateFlow(TopState(isLoading = true))
     val state = _state.asStateFlow()
+
+    var isReady by mutableStateOf(false)
+    var isRestart by mutableStateOf(false)
 
     init {
         viewModelScope.launch {
             if (!accountService.hasUser) {
-                accountService.createAnonymousAccount()
+                    accountService.createAnonymousAccount()
             }
             accountService.useTokenCallApi { token ->
-                getTranslateDataUseCase(token).onEach { response ->
-                    processTranslateDataResponse(response) {
-                        save(it)
-                    }
-                }.launchIn(viewModelScope)
+                if (token.isEmpty()) {
+                    _state.value = TopState(error = "認証できませんでした。\nネットワーク接続を確認してください。")
+                } else {
+                    getTranslateDataUseCase(token).onEach { response ->
+                        processTranslateDataResponse(response) {
+                            save(it)
+                            isReady = true
+                        }
+                    }.launchIn(viewModelScope)
+                }
             }
         }
     }
@@ -60,20 +71,26 @@ class TopViewModel @Inject constructor(
     }
 
     private fun processTranslateDataResponse(
-        response: Response<List<TranslateData>>,
+        async: Async<List<TranslateData>>,
         saveSuccessData: (List<TranslateData>?) -> Unit = {},
     ) {
-        when (response) {
-            is Response.Loading -> {
+        when (async) {
+            is Async.Loading -> {
                 _state.value = TopState(isLoading = true)
             }
-            is Response.Success -> {
-                saveSuccessData(response.data)
-                _state.value = TopState(translateData = response.data)
+            is Async.Success -> {
+                saveSuccessData(async.data)
+                _state.value = TopState(translateData = async.data)
             }
-            is Response.Failure -> {
-                _state.value = TopState(error = response.error)
+            is Async.Failure -> {
+                _state.value = TopState(error = async.error)
             }
         }
+    }
+
+    fun restart() {
+        isReady = false
+        isRestart = true
+        _state.value = TopState(isLoading = true)
     }
 }

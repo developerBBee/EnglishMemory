@@ -1,7 +1,6 @@
 package jp.developer.bbee.englishmemory.domain.model
 
 import androidx.room.Entity
-import androidx.room.PrimaryKey
 
 /**
  * 単語の翻訳データ

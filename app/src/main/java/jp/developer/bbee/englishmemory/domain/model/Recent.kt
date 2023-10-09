@@ -12,4 +12,22 @@ data class Recent(
     val recentNumber: Int,
     val english: String,
     val wordType: String,
-)
+) {
+    fun updateRecentList(
+        recentList: List<Recent>,
+        translateData: TranslateData,
+    ): List<Recent> {
+        val newRecentList = mutableListOf<Recent>()
+        recentList.forEach {
+            if (it.recentNumber < 99) {
+                newRecentList.add(
+                    Recent(it.recentNumber + 1, it.english, it.wordType)
+                )
+            }
+        }
+        newRecentList.add(
+            Recent(0, translateData.english, translateData.wordType)
+        )
+        return newRecentList
+    }
+}

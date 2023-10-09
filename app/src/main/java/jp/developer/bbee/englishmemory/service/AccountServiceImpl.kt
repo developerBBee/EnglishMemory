@@ -16,7 +16,10 @@ class AccountServiceImpl @Inject constructor(
 
     override suspend fun useTokenCallApi(callApi: (String)->Unit) {
         auth.currentUser?.getIdToken(true)?.addOnCompleteListener {
-            val token = it.result.token ?: ""
+            var token = ""
+            try {
+                token = it.result.token ?: ""
+            } catch (_: Exception) { }
             callApi(token)
         }
     }

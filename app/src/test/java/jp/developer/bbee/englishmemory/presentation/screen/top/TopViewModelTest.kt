@@ -1,7 +1,7 @@
 package jp.developer.bbee.englishmemory.presentation.screen.top
 
 import com.google.common.truth.Truth.assertThat
-import jp.developer.bbee.englishmemory.common.response.Response
+import jp.developer.bbee.englishmemory.common.response.Async
 import jp.developer.bbee.englishmemory.domain.model.TranslateData
 import jp.developer.bbee.englishmemory.domain.usecase.SaveTranslateDataUseCase
 import jp.developer.bbee.englishmemory.testdouble.FakeAccountService
@@ -80,7 +80,7 @@ class TopViewModelTest {
         fakeRepository.testClear()
 
         // Success response test
-        fakeGetTranslateDataUseCase.setTestEmit(Response.Success(testData))
+        fakeGetTranslateDataUseCase.setTestEmit(Async.Success(testData))
         topViewModel = TopViewModel(
             fakeGetTranslateDataUseCase,
             fakeSaveTranslateDataUseCase,
@@ -121,7 +121,7 @@ class TopViewModelTest {
         fakeRepository.testClear()
 
         // Success response test
-        fakeGetTranslateDataUseCase.setTestEmit(Response.Success(testData))
+        fakeGetTranslateDataUseCase.setTestEmit(Async.Success(testData))
         fakeService.setHasUser(true)
         topViewModel = TopViewModel(
             fakeGetTranslateDataUseCase,
@@ -163,7 +163,7 @@ class TopViewModelTest {
         fakeRepository.testClear()
 
         // Success response test
-        fakeGetTranslateDataFromDbUseCase.setTestEmit(Response.Success(testData))
+        fakeGetTranslateDataFromDbUseCase.setTestEmit(Async.Success(testData))
         topViewModel = TopViewModel(
             fakeGetTranslateDataUseCase,
             fakeSaveTranslateDataUseCase,

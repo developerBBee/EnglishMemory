@@ -1,6 +1,6 @@
 package jp.developer.bbee.englishmemory.domain.usecase
 
-import jp.developer.bbee.englishmemory.common.response.Response
+import jp.developer.bbee.englishmemory.common.response.Async
 import jp.developer.bbee.englishmemory.domain.model.TranslateData
 import jp.developer.bbee.englishmemory.domain.repository.TranslateRepository
 import kotlinx.coroutines.Dispatchers
@@ -12,15 +12,15 @@ import javax.inject.Inject
 open class GetTranslateDataFromDbUseCase @Inject constructor(
     private val repository: TranslateRepository
 ) {
-    open operator fun invoke(): Flow<Response<List<TranslateData>>> = flow {
+    open operator fun invoke(): Flow<Async<List<TranslateData>>> = flow {
         try {
-            emit(Response.Loading())
+            emit(Async.Loading())
             val result = withContext(Dispatchers.IO) {
                 repository.getTranslateData()
             }
-            emit(Response.Success(result))
+            emit(Async.Success(result))
         } catch (e: Exception) {
-            emit(Response.Failure(e.message.toString()))
+            emit(Async.Failure(e.message.toString()))
         }
     }
 }
