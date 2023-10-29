@@ -61,6 +61,9 @@ class TopViewModelTest {
         fakeService.testClear()
         fakeRepository.testClear()
 
+        // Not empty string is Success Token
+        fakeService.setFakeToken("testToken")
+
         // Loading response test
         topViewModel = TopViewModel(
             fakeGetTranslateDataUseCase,
@@ -78,6 +81,9 @@ class TopViewModelTest {
         // Clear test result on service and repository
         fakeService.testClear()
         fakeRepository.testClear()
+
+        // Not empty string is Success Token
+        fakeService.setFakeToken("testToken")
 
         // Success response test
         fakeGetTranslateDataUseCase.setTestEmit(Async.Success(testData))
@@ -101,6 +107,9 @@ class TopViewModelTest {
         fakeService.testClear()
         fakeRepository.testClear()
 
+        // Not empty string is Success Token
+        fakeService.setFakeToken("testToken")
+
         // Loading response test
         fakeService.setHasUser(true)
         topViewModel = TopViewModel(
@@ -120,6 +129,9 @@ class TopViewModelTest {
         fakeService.testClear()
         fakeRepository.testClear()
 
+        // Not empty string is Success Token
+        fakeService.setFakeToken("testToken")
+
         // Success response test
         fakeGetTranslateDataUseCase.setTestEmit(Async.Success(testData))
         fakeService.setHasUser(true)
@@ -135,6 +147,51 @@ class TopViewModelTest {
         assertThat(fakeService.createAnonymousCheck).isFalse() // Not create if has user
         assertThat(fakeService.userTokenCheck).isTrue()
         assertThat(fakeRepository.testSaveCheck).isTrue()
+    }
+
+    @Test
+    fun test_ViewModelInit_TokenError() = runTest {
+        // Clear test result on service and repository
+        fakeService.testClear()
+        fakeRepository.testClear()
+
+        // Empty string is Failure Token
+        fakeService.setFakeToken("")
+
+        // Loading response test
+        topViewModel = TopViewModel(
+            fakeGetTranslateDataUseCase,
+            fakeSaveTranslateDataUseCase,
+            fakeGetTranslateDataFromDbUseCase,
+            fakeService
+        )
+        val actual1 = topViewModel.state.value
+        val expect1 = TopState(error = "認証できませんでした。\nネットワーク接続を確認してください。")
+        assertThat(actual1).isEqualTo(expect1)
+    }
+
+    @Test
+    fun test_ViewModelInit_FailureTranslateData() = runTest {
+        // Clear test result on service and repository
+        fakeService.testClear()
+        fakeRepository.testClear()
+
+        // Not empty string is Success Token
+        fakeService.setFakeToken("testToken")
+
+        // Failure response test
+        val errorMassage = "error test"
+        fakeGetTranslateDataUseCase.setTestEmit(Async.Failure(errorMassage))
+        topViewModel = TopViewModel(
+            fakeGetTranslateDataUseCase,
+            fakeSaveTranslateDataUseCase,
+            fakeGetTranslateDataFromDbUseCase,
+            fakeService
+        )
+
+        val actual1 = topViewModel.state.value
+        val expect1 = TopState(error = errorMassage)
+        assertThat(actual1).isEqualTo(expect1)
     }
 
     @Test

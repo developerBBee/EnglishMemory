@@ -110,6 +110,10 @@ fun TopScreen(
                     },
                     text = { Text(text = errorMessage) }
                 )
+            } else if (state.isLoading) {
+                Box(modifier = Modifier.fillMaxSize()) {
+                    CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                }
             }
         }
     }

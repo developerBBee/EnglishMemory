@@ -9,6 +9,7 @@ import jp.developer.bbee.englishmemory.domain.model.Recent
 import jp.developer.bbee.englishmemory.domain.model.StudyData
 import jp.developer.bbee.englishmemory.domain.model.StudyStatus
 import jp.developer.bbee.englishmemory.domain.model.TranslateData
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface EnglishMemoryDao {
@@ -51,7 +52,7 @@ interface EnglishMemoryDao {
     suspend fun getStudyStatus(english: String, wordType: String): StudyStatus
 
     @Query("SELECT * FROM Recent")
-    suspend fun getRecent(): List<Recent>
+    fun getRecent(): Flow<List<Recent>>
 
     @Query("SELECT * FROM DailyStudy")
     suspend fun getDailyStudy(): List<DailyStudy>

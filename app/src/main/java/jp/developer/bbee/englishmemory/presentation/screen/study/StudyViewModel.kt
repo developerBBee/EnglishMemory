@@ -8,10 +8,12 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jp.developer.bbee.englishmemory.common.response.Async
 import jp.developer.bbee.englishmemory.domain.model.StudyData
+import jp.developer.bbee.englishmemory.domain.usecase.GetRecentUseCase
 import jp.developer.bbee.englishmemory.domain.usecase.GetStudyDataUseCase
 import jp.developer.bbee.englishmemory.domain.usecase.UpdateStudyStatusUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
@@ -39,12 +41,15 @@ data class StudyState(
 @HiltViewModel
 class StudyViewModel @Inject constructor(
     getStudyDataUseCase: GetStudyDataUseCase,
+    private val getRecentUseCase: GetRecentUseCase,
     private val updateStudyStatusUseCase: UpdateStudyStatusUseCase,
 ) : ViewModel() {
     private var _state = MutableStateFlow(StudyState(isLoading = true))
     val state = _state.asStateFlow()
 
     var isShowCorrect by mutableStateOf(false)
+
+    var recent = getRecentUseCase().distinctUntilChanged()
 
     init {
         getStudyDataUseCase().onEach { response ->
@@ -107,5 +112,9 @@ class StudyViewModel @Inject constructor(
                 updateStudyStatusUseCase(updated.getStudyStatus())
             }
         }
+    }
+
+    fun updateRecent() {
+
     }
 }

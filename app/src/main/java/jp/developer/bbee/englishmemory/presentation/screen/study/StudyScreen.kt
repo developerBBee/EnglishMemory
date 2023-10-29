@@ -13,10 +13,12 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalUriHandler
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -33,6 +35,7 @@ fun StudyScreen(
     val question = state.questionData
 
     val isShowCorrect = viewModel.isShowCorrect
+    val uriHandler = LocalUriHandler.current
 
     Box(Modifier.fillMaxSize()) {
         if (state.isLoading) {
@@ -87,8 +90,19 @@ fun StudyScreen(
                             text = lineBreakAdjustment(question.translateToJapanese),
                             style = MaterialTheme.typography.titleLarge,
                         )
+                        Spacer(modifier = Modifier.padding(AppTheme.dimens.small))
+                        TextButton(onClick = {
+                            uriHandler.openUri("https://ejje.weblio.jp/content/${question.english}")
+                        }) {
+                            Text(
+                                text = "Weblioでこの単語を調べる",
+                                style = MaterialTheme.typography.titleSmall,
+                            )
+                        }
                     }
                 }
+
+                // ボタン
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -134,14 +148,18 @@ fun StudyScreen(
 fun lineBreakAdjustment(str: String): String {
     val splitStr = str.split("、")
     var retStr = ""
-    var lines = 1
+    var lineWords = 0
     splitStr.forEach {
         if (retStr.isNotEmpty()) {
             retStr += "、"
-            if (retStr.length > 10 * lines) {
-                retStr += "\n"
-                lines++
-            }
+            lineWords += 1
+        }
+
+        // ワードを追加した場合に1行で15文字以上の場合は改行する
+        lineWords += it.length
+        if (lineWords >= 15) {
+            retStr += "\n"
+            lineWords = it.length
         }
         retStr += it
     }
