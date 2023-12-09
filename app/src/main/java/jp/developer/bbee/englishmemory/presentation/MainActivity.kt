@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.ui.Modifier
+import androidx.core.view.WindowCompat
 import dagger.hilt.android.AndroidEntryPoint
 import jp.developer.bbee.englishmemory.presentation.ui.theme.EnglishMemoryTheme
 
@@ -14,6 +15,10 @@ import jp.developer.bbee.englishmemory.presentation.ui.theme.EnglishMemoryTheme
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+
+        // ステータスバー、ナビバー領域まで描画する
+        WindowCompat.setDecorFitsSystemWindows(window, false)
+
         setContent {
             EnglishMemoryTheme {
                 // A surface container using the 'background' color from the theme

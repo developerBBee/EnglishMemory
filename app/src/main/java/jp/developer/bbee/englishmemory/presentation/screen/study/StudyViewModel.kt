@@ -1,5 +1,6 @@
 package jp.developer.bbee.englishmemory.presentation.screen.study
 
+import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -7,9 +8,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jp.developer.bbee.englishmemory.common.response.Async
+import jp.developer.bbee.englishmemory.domain.model.Recent
 import jp.developer.bbee.englishmemory.domain.model.StudyData
 import jp.developer.bbee.englishmemory.domain.usecase.GetRecentUseCase
 import jp.developer.bbee.englishmemory.domain.usecase.GetStudyDataUseCase
+import jp.developer.bbee.englishmemory.domain.usecase.UpdateRecentUseCase
 import jp.developer.bbee.englishmemory.domain.usecase.UpdateStudyStatusUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -42,6 +45,7 @@ data class StudyState(
 class StudyViewModel @Inject constructor(
     getStudyDataUseCase: GetStudyDataUseCase,
     private val getRecentUseCase: GetRecentUseCase,
+    private val updateRecentUseCase: UpdateRecentUseCase,
     private val updateStudyStatusUseCase: UpdateStudyStatusUseCase,
 ) : ViewModel() {
     private var _state = MutableStateFlow(StudyState(isLoading = true))
@@ -49,7 +53,14 @@ class StudyViewModel @Inject constructor(
 
     var isShowCorrect by mutableStateOf(false)
 
-    var recent = getRecentUseCase().distinctUntilChanged()
+    val recent = getRecentUseCase().distinctUntilChanged()
+    private var recentData: List<Recent> = emptyList();
+    val a = viewModelScope.launch {
+        recent.collect {
+            recentData = it
+            Log.d("MyTag", "recentdata: $recentData")
+        }
+    }
 
     init {
         getStudyDataUseCase().onEach { response ->
@@ -86,6 +97,8 @@ class StudyViewModel @Inject constructor(
 
     fun updateStudyStatus(correct: Boolean) {
         state.value.questionData?.let {
+            updateRecent(it, correct)
+
             val updateNumberOfQuestion = it.numberOfQuestion + 1
             val updateCountCorrect = it.countCorrect + (if (correct) 1 else 0)
             val updateCountMiss = it.countMiss + (if (!correct) 1 else 0)
@@ -114,7 +127,12 @@ class StudyViewModel @Inject constructor(
         }
     }
 
-    fun updateRecent() {
-
+    fun updateRecent(studyData: StudyData, correct: Boolean) {
+        val addRecent = Recent(studyData, correct)
+        addRecent.updateRecentList(recentData).let {
+            viewModelScope.launch {
+                updateRecentUseCase(it)
+            }
+        }
     }
 }

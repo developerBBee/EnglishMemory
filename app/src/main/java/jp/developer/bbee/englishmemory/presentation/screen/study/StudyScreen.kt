@@ -15,6 +15,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,6 +24,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import jp.developer.bbee.englishmemory.presentation.ScreenRoute.TopScreen
+import jp.developer.bbee.englishmemory.presentation.components.modal.CustomScaffold
 import jp.developer.bbee.englishmemory.presentation.ui.theme.AppTheme
 
 @Composable
@@ -31,8 +33,31 @@ fun StudyScreen(
     viewModel: StudyViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val drawerOpenEnabled = !state.isLoading && state.error.isNullOrBlank()
+
+    val title = "Study Mode"
+    CustomScaffold(
+        title = title,
+        navController = navController,
+        drawerOpenEnabled = drawerOpenEnabled
+    ) {
+        StudyContent(
+            state = state,
+            navController = navController,
+            viewModel = viewModel
+        )
+    }
+}
+
+@Composable
+fun StudyContent(
+    state: StudyState,
+    navController: NavController,
+    viewModel: StudyViewModel,
+) {
     val error = state.error
     val question = state.questionData
+    val recent by viewModel.recent.collectAsState(initial = emptyList())
 
     val isShowCorrect = viewModel.isShowCorrect
     val uriHandler = LocalUriHandler.current
@@ -52,6 +77,15 @@ fun StudyScreen(
             Column(
                 modifier = Modifier.fillMaxSize()
             ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .weight(0.1f),
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                ) {
+                    Text(text = if(recent.isEmpty()) "" else recent.get(0).english)
+                }
                 /* 出題英単語 */
                 Column(
                     modifier = Modifier

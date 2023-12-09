@@ -33,6 +33,7 @@ import androidx.navigation.NavController
 import jp.developer.bbee.englishmemory.domain.model.TranslateData
 import jp.developer.bbee.englishmemory.presentation.ScreenRoute.StartApp
 import jp.developer.bbee.englishmemory.presentation.ScreenRoute.StudyScreen
+import jp.developer.bbee.englishmemory.presentation.components.modal.CustomScaffold
 import jp.developer.bbee.englishmemory.presentation.ui.theme.AppTheme
 
 const val DEBUG = false
@@ -43,6 +44,26 @@ fun TopScreen(
     viewModel: TopViewModel = hiltViewModel(),
 ) {
     val state by viewModel.state.collectAsStateWithLifecycle()
+    val drawerOpenEnabled = !state.isLoading && state.error.isNullOrBlank()
+
+    CustomScaffold(
+        title = "Memorizing English Words",
+        navController = navController,
+        drawerOpenEnabled = drawerOpenEnabled
+    ) {
+        TopContent(
+            state = state,
+            navController = navController,
+            viewModel = viewModel
+        )
+    }
+}
+@Composable
+fun TopContent(
+    state: TopState,
+    navController: NavController,
+    viewModel: TopViewModel,
+) {
     val dataList = state.translateData
     val errorMessage = state.error
 
