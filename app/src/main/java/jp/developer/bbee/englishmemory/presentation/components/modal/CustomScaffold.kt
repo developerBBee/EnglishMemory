@@ -77,10 +77,19 @@ fun CustomScaffold(
                 NavigationDrawerItem(
                     label = { Text(text = "Study Mode") },
                     selected = false,
-                    onClick = { navController.navigate(ScreenRoute.StudyScreen.route) {
-                            // launchSingleTopをtrueにすることで、同じ画面に遷移しなくする
+                    onClick = {
+                        navController.navigate(ScreenRoute.StudyScreen.route) {
                             launchSingleTop = true
-                            // drawerを閉じる
+                            scope.launch { drawerState.close() }
+                        }
+                    }
+                )
+                NavigationDrawerItem(
+                    label = { Text(text = "Settings") },
+                    selected = false,
+                    onClick = {
+                        navController.navigate(ScreenRoute.SettingScreen.route) {
+                            launchSingleTop = true
                             scope.launch { drawerState.close() }
                         }
                     }

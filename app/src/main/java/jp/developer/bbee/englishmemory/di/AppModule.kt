@@ -1,6 +1,10 @@
 package jp.developer.bbee.englishmemory.di
 
 import android.content.Context
+import androidx.datastore.core.DataStore
+import androidx.datastore.preferences.core.PreferenceDataStoreFactory
+import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.preferencesDataStoreFile
 import androidx.room.Room
 import com.squareup.moshi.Moshi
 import com.squareup.moshi.kotlin.reflect.KotlinJsonAdapterFactory
@@ -10,10 +14,13 @@ import dagger.hilt.InstallIn
 import dagger.hilt.android.qualifiers.ApplicationContext
 import dagger.hilt.components.SingletonComponent
 import jp.developer.bbee.englishmemory.BuildConfig.BASE_URL
+import jp.developer.bbee.englishmemory.data.repository.PreferenceRepositoryImpl
 import jp.developer.bbee.englishmemory.data.repository.TranslateRepositoryImpl
+import jp.developer.bbee.englishmemory.data.source.datastore.PreferenceStore
 import jp.developer.bbee.englishmemory.data.source.local.EnglishMemoryDao
 import jp.developer.bbee.englishmemory.data.source.local.EnglishMemoryDatabase
 import jp.developer.bbee.englishmemory.data.source.remote.api.AwsApi
+import jp.developer.bbee.englishmemory.domain.repository.PreferenceRepository
 import jp.developer.bbee.englishmemory.domain.repository.TranslateRepository
 import retrofit2.Retrofit
 import retrofit2.converter.moshi.MoshiConverterFactory
@@ -51,4 +58,18 @@ object AppModule {
     fun provideTranslateRepository(awsApi: AwsApi, dao: EnglishMemoryDao): TranslateRepository {
         return TranslateRepositoryImpl(awsApi, dao)
     }
+
+    @Provides
+    @Singleton
+    fun provideStoreModule(
+        @ApplicationContext context: Context
+    ): DataStore<Preferences> = PreferenceDataStoreFactory.create {
+        context.preferencesDataStoreFile("settings")
+    }
+
+    @Provides
+    @Singleton
+    fun providePreferenceRepository(
+        store: DataStore<Preferences>
+    ): PreferenceRepository = PreferenceRepositoryImpl(PreferenceStore(store))
 }

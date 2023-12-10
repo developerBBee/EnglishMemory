@@ -4,9 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import jp.developer.bbee.englishmemory.presentation.ScreenRoute.SettingScreen
 import jp.developer.bbee.englishmemory.presentation.ScreenRoute.StartApp
 import jp.developer.bbee.englishmemory.presentation.ScreenRoute.StudyScreen
 import jp.developer.bbee.englishmemory.presentation.ScreenRoute.TopScreen
+import jp.developer.bbee.englishmemory.presentation.screen.setting.SettingScreen
 import jp.developer.bbee.englishmemory.presentation.screen.study.StudyScreen
 import jp.developer.bbee.englishmemory.presentation.screen.top.TopScreen
 
@@ -25,6 +27,9 @@ fun StartApp() {
         }
         composable(StudyScreen.route) {
             StudyScreen(navController = navController)
+        }
+        composable(SettingScreen.route) {
+            SettingScreen(navController = navController)
         }
     }
 }
