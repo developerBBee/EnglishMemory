@@ -19,9 +19,11 @@ android {
         versionCode = 1
         versionName = "1.0"
 
-        val properties = Properties()
-        properties.load(project.rootProject.file("local.properties").inputStream())
-        val baseUrl = properties.getProperty("baseUrl")
+        val baseUrl = System.getenv("AWS_BASE_URL") ?: run {
+            val properties = Properties()
+            properties.load(project.rootProject.file("local.properties").inputStream())
+            properties.getProperty("baseUrl")
+        }
         buildConfigField("String", "BASE_URL", "\"$baseUrl\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"

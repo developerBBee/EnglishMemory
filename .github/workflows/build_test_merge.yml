@@ -1,0 +1,53 @@
+name: Build and Test and Merge
+on:
+  push:
+    branches-ignore:
+      - main
+
+jobs:
+  build_and_test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout for build and test
+      uses: actions/checkout@v4
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'adopt'
+
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+
+    - name: Build with Gradle
+      run: ./gradlew build
+      env:
+        BASE_URL: ${{ secrets.BASE_URL }}
+
+    - name: Test with Gradle
+      run: ./gradlew test
+
+  merge:
+    needs: build_and_test
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout for merge
+      uses: actions/checkout@v4
+      with:
+        ref: main
+
+    - name: Configure Git
+      run: |
+        git config --global user.name "GitHub Actions"
+        git config --global user.email ""
+
+    - name: Merge branch
+      run: |
+        git merge --no-ff ${{ github.head.ref }}
+        git push origin main
+
+    - name: Delete branch
+      run: git push origin --delete "${{ github.head_ref }}"
