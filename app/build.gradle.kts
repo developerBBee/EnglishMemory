@@ -83,11 +83,11 @@ android {
 
     // for GitHub Actions
     applicationVariants.all {
-        val buildDir = project.layout.buildDirectory.get().asFile
-        val dir = File(buildDir, "generated/google-services/${name}")
-        dir.mkdirs()
+        val dir = projectDir
         val file = File(dir, "google-services.json")
-        file.writeText(System.getenv("GOOGLE_SERVICES_JSON") ?: "")
+        if (!file.exists()) {
+            file.writeText(System.getenv("GOOGLE_SERVICES_JSON") ?: "")
+        }
     }
 }
 

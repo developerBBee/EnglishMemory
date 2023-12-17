@@ -9,6 +9,14 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: echos github.ref
+      run: |
+        echo '$GITHUB_REF     =' $GITHUB_REF
+        echo 'github.ref      =' ${{ github.ref }}
+        echo 'github.ref_name =' ${{ github.ref_name }}
+        echo 'github.head_ref =' ${{ github.head_ref }}
+        echo 'github.base_ref =' ${{ github.base_ref }}
+
     - name: Checkout for build and test
       uses: actions/checkout@v4
 
@@ -29,15 +37,20 @@ jobs:
 
     - name: Test with Gradle
       run: ./gradlew test
+      env:
+        AWS_BASE_URL: ${{ secrets.AWS_BASE_URL }}
+        GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
 
     - name: Archive debug test results
       uses: actions/upload-artifact@v4
+      if: always()
       with:
         name: debug-test-results
         path: app/build/reports/tests/testDebugUnitTest
 
     - name: Archive release test results
       uses: actions/upload-artifact@v4
+      if: always()
       with:
         name: release-test-results
         path: app/build/reports/tests/testReleaseUnitTest
@@ -59,8 +72,11 @@ jobs:
 
     - name: Merge branch
       run: |
-        git merge --no-ff ${{ github.head.ref }}
+        git fetch origin
+        git branch -a
+        echo "marge : ${{ github.ref_name }} -> main"
+        git merge --no-ff --no-edit origin/${{ github.ref_name }}
         git push origin main
 
     - name: Delete branch
-      run: git push origin --delete "${{ github.head_ref }}"
+      run: echo ${{ github.ref_name }} | xargs git push origin --delete
