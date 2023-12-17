@@ -3,19 +3,22 @@ package jp.developer.bbee.englishmemory.domain.usecase
 import jp.developer.bbee.englishmemory.common.response.Async
 import jp.developer.bbee.englishmemory.domain.model.TranslateData
 import jp.developer.bbee.englishmemory.domain.repository.TranslateRepository
+import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-open class GetTranslateDataUseCase @Inject constructor(
+class GetTranslateDataUseCase @Inject constructor(
+    private val dispatcher: CoroutineDispatcher = Dispatchers.IO,
     private val repository: TranslateRepository
 ) {
-    open operator fun invoke(token: String): Flow<Async<List<TranslateData>>> = flow {
+
+    operator fun invoke(token: String): Flow<Async<List<TranslateData>>> = flow {
         try {
             emit(Async.Loading())
-            val result = withContext(Dispatchers.IO) {
+            val result = withContext(dispatcher) {
                 repository.getTranslateData(token)
             }
             emit(Async.Success(result))

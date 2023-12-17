@@ -1,7 +1,8 @@
 package jp.developer.bbee.englishmemory.service
 
+import kotlinx.coroutines.flow.Flow
+
 interface AccountService {
-    val hasUser: Boolean
-    suspend fun createAnonymousAccount()
-    suspend fun useTokenCallApi(callApi: (String)->Unit)
+    val hasNoUser: Boolean
+    fun tokenFlow(): Flow<String>
 }

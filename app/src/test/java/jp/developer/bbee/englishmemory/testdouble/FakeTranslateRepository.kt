@@ -5,22 +5,35 @@ import jp.developer.bbee.englishmemory.domain.model.StudyData
 import jp.developer.bbee.englishmemory.domain.model.StudyStatus
 import jp.developer.bbee.englishmemory.domain.model.TranslateData
 import jp.developer.bbee.englishmemory.domain.repository.TranslateRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
 
 class FakeTranslateRepository : TranslateRepository {
-    var testSaveCheck = false
+    var failureGetTranslateDataByToken = false
+    var failureGetTranslateData = false
+    var failureSaveTranslateData = false
+    var failureMessage: String = ""
+    var delayTime: Long = 0
+    var testGetResult: List<TranslateData> = emptyList()
+    var testSaveData: List<TranslateData>? = null
 
     override suspend fun getTranslateData(token: String): List<TranslateData> {
-        return emptyList()
+        delay(delayTime)
+        if (failureGetTranslateDataByToken) throw RuntimeException(failureMessage)
+        return testGetResult
     }
 
     override suspend fun getTranslateData(): List<TranslateData> {
-        return emptyList()
+        delay(delayTime)
+        if (failureGetTranslateData) throw RuntimeException(failureMessage)
+        return testGetResult
     }
 
     override suspend fun saveTranslateData(translateDataList: List<TranslateData>) {
-        testSaveCheck = true
+        delay(delayTime)
+        if (failureSaveTranslateData) throw RuntimeException(failureMessage)
+        testSaveData = translateDataList
         return
     }
 
@@ -29,7 +42,6 @@ class FakeTranslateRepository : TranslateRepository {
     }
 
     override suspend fun updateStudyStatus(studyStatus: StudyStatus) {
-        testSaveCheck = true
         return
     }
 
@@ -38,11 +50,6 @@ class FakeTranslateRepository : TranslateRepository {
     }
 
     override suspend fun updateRecent(recent: List<Recent>) {
-        testSaveCheck = true
         return
-    }
-
-    fun testClear() {
-        testSaveCheck = false
     }
 }

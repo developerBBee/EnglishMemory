@@ -1,37 +1,27 @@
 package jp.developer.bbee.englishmemory.testdouble
 
 import jp.developer.bbee.englishmemory.service.AccountService
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.flow
 
 class FakeAccountService : AccountService {
-    private var testHasUser = false
+    var testHasUser = false
     var createAnonymousCheck: Boolean = false
     var userTokenCheck: Boolean = false
-    private var fakeToken: String = ""; // empty string means error, not empty means success
+    var fakeToken: String = ""; // empty string means error, not empty means success
+    var failureMessage: String = ""
+    var delayTime: Long = 0
+    override val hasNoUser: Boolean
+        get() = !testHasUser
 
-    override val hasUser: Boolean
-        get() = testHasUser
-
-    override suspend fun createAnonymousAccount() {
-        createAnonymousCheck = true
-    }
-
-    override suspend fun useTokenCallApi(callApi: (String) -> Unit) {
+    override fun tokenFlow(): Flow<String> = flow {
+        if (hasNoUser) {
+            createAnonymousCheck = true
+        }
+        delay(delayTime)
+        if (fakeToken.isEmpty()) throw RuntimeException(failureMessage)
         userTokenCheck = true
-        callApi(fakeToken)
-    }
-
-    fun setHasUser(hasUser: Boolean) {
-        testHasUser = hasUser
-    }
-
-    fun setFakeToken(fakeToken: String) {
-        this.fakeToken = fakeToken
-    }
-
-    fun testClear() {
-        testHasUser = false
-        createAnonymousCheck = false
-        userTokenCheck = false
-        fakeToken = ""
+        emit(fakeToken)
     }
 }

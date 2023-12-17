@@ -12,10 +12,14 @@ import jp.developer.bbee.englishmemory.domain.usecase.GetTranslateDataFromDbUseC
 import jp.developer.bbee.englishmemory.domain.usecase.GetTranslateDataUseCase
 import jp.developer.bbee.englishmemory.domain.usecase.SaveTranslateDataUseCase
 import jp.developer.bbee.englishmemory.service.AccountService
+import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.onStart
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,12 +29,13 @@ data class TopState(
     val error: String? = null,
 )
 
+@OptIn(ExperimentalCoroutinesApi::class)
 @HiltViewModel
 class TopViewModel @Inject constructor(
     private val getTranslateDataUseCase: GetTranslateDataUseCase,
     private val saveTranslateDataUseCase: SaveTranslateDataUseCase,
     private val getTranslateDataFromDbUseCase: GetTranslateDataFromDbUseCase,
-    private val accountService: AccountService,
+    accountService: AccountService,
 ) : ViewModel() {
     private var _state = MutableStateFlow(TopState(isLoading = true))
     val state = _state.asStateFlow()
@@ -39,35 +44,38 @@ class TopViewModel @Inject constructor(
     var isRestart by mutableStateOf(false)
 
     init {
-        viewModelScope.launch {
-            if (!accountService.hasUser) {
-                    accountService.createAnonymousAccount()
+        accountService.tokenFlow()
+            .onStart { _state.value = TopState(isLoading = true) }
+            .flatMapLatest { token ->
+                getTranslateDataUseCase(token)
             }
-            accountService.useTokenCallApi { token ->
-                if (token.isEmpty()) {
-                    _state.value = TopState(error = "認証できませんでした。\nネットワーク接続を確認してください。")
-                } else {
-                    getTranslateDataUseCase(token).onEach { response ->
-                        processTranslateDataResponse(response) {
-                            save(it)
-                            isReady = true
-                        }
-                    }.launchIn(viewModelScope)
+            .onEach { response ->
+                processTranslateDataResponse(response) {
+                    save(it)
+                    isReady = true
                 }
             }
-        }
+            .catch {
+                _state.value = TopState(error = it.message?: "ネットワークエラー")
+            }
+            .launchIn(viewModelScope)
     }
 
     fun save(translateData: List<TranslateData>? = _state.value.translateData) {
         viewModelScope.launch {
-            saveTranslateDataUseCase(translateData ?: emptyList())
+            runCatching {
+                saveTranslateDataUseCase(translateData ?: emptyList())
+            }.onFailure {
+                _state.value = TopState(error = it.message?: "ローカルDBデータ保存エラー")
+            }
         }
     }
 
     fun load() {
-        getTranslateDataFromDbUseCase().onEach { response ->
-            processTranslateDataResponse(response)
-        }.launchIn(viewModelScope)
+        getTranslateDataFromDbUseCase()
+            .onEach { response ->
+                processTranslateDataResponse(response)
+            }.launchIn(viewModelScope)
     }
 
     private fun processTranslateDataResponse(
