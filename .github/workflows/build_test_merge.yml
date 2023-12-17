@@ -24,10 +24,23 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
       env:
-        BASE_URL: ${{ secrets.BASE_URL }}
+        AWS_BASE_URL: ${{ secrets.AWS_BASE_URL }}
+        GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
 
     - name: Test with Gradle
       run: ./gradlew test
+
+    - name: Archive debug test results
+      uses: actions/upload-artifact@v4
+      with:
+        name: debug-test-results
+        path: app/build/reports/tests/testDebugUnitTest
+
+    - name: Archive release test results
+      uses: actions/upload-artifact@v4
+      with:
+        name: release-test-results
+        path: app/build/reports/tests/testReleaseUnitTest
 
   merge:
     needs: build_and_test

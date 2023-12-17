@@ -5,6 +5,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.dagger.hilt.android")
     id("com.google.gms.google-services")
+    id("com.google.firebase.crashlytics")
     id("com.google.devtools.ksp")
 }
 
@@ -79,6 +80,15 @@ android {
             excludes += "/META-INF/{AL2.0,LGPL2.1}"
         }
     }
+
+    // for GitHub Actions
+    applicationVariants.all {
+        val buildDir = project.layout.buildDirectory.get().asFile
+        val dir = File(buildDir, "generated/google-services/${name}")
+        dir.mkdirs()
+        val file = File(dir, "google-services.json")
+        file.writeText(System.getenv("GOOGLE_SERVICES_JSON") ?: "")
+    }
 }
 
 dependencies {
@@ -96,6 +106,7 @@ dependencies {
 
     // Firebase
     implementation(platform("com.google.firebase:firebase-bom:32.7.0"))
+    implementation("com.google.firebase:firebase-crashlytics-ktx")
     implementation("com.google.firebase:firebase-analytics-ktx")
     implementation("com.google.firebase:firebase-auth-ktx")
 
