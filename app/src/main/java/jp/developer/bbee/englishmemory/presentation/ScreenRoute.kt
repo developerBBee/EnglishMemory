@@ -4,5 +4,6 @@ sealed class ScreenRoute(val route: String) {
     object StartApp : ScreenRoute("start")
     object TopScreen : ScreenRoute("top")
     object StudyScreen : ScreenRoute("study")
+    object HistoryScreen : ScreenRoute("history")
     object SettingScreen : ScreenRoute("setting")
 }

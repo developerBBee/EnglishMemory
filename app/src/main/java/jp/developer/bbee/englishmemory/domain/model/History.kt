@@ -6,19 +6,20 @@ import java.time.LocalDate
 import java.time.LocalDateTime
 
 /**
- * 1日の勉強内容を表す
+ * 全ての学習履歴
  */
 @Entity
-data class DailyStudy(
-    @PrimaryKey(autoGenerate = true)
-    val id: Int,
-    val studyDate: String,
+data class History(
+    @PrimaryKey
+    val studyDate: LocalDateTime,
     val english: String,
     val wordType: String,
+    val correct: Boolean,
 ) {
 
-    fun getDate(dateChangeHour: Long): LocalDate {
-        val dateTime = LocalDateTime.parse(studyDate)
+    // dateChangeHourは、ユーザー設定された日付変更時刻
+    fun toUserDate(dateChangeHour: Long): LocalDate {
+        val dateTime = studyDate
         dateTime.minusHours(dateChangeHour)
         return dateTime.toLocalDate()
     }

@@ -16,23 +16,7 @@ data class StudyData(
     val isLatestAnswerCorrect: Boolean = false, // 最新の回答が正解かどうか
     val isFavorite: Boolean = false, // お気に入りかどうか
 ) {
-    fun getStudyStatus() = StudyStatus(
+    fun toStudyStatus() = StudyStatus(
         english, wordType, numberOfQuestion, scoreRate, countMiss, countCorrect, isLatestAnswerCorrect, isFavorite
     )
-
-    fun updateStudyData(
-        english: String = this.english,
-        wordType: String = this.wordType,
-        translateToJapanese: String = this.translateToJapanese,
-        importance: String = this.importance,
-        registrationDateUTC: String = this.registrationDateUTC,
-        numberOfQuestion: Int = this.numberOfQuestion,
-        scoreRate: Double = this.scoreRate,
-        countMiss: Int = this.countMiss,
-        countCorrect: Int = this.countCorrect,
-        isLatestAnswerCorrect: Boolean = this.isLatestAnswerCorrect,
-        isFavorite: Boolean = this.isFavorite
-    ): StudyData {
-        return StudyData(english, wordType, translateToJapanese, importance, registrationDateUTC, numberOfQuestion, scoreRate, countMiss, countCorrect, isLatestAnswerCorrect, isFavorite)
-    }
 }

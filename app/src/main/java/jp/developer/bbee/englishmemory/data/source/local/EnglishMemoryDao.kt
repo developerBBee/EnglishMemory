@@ -4,7 +4,7 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
-import jp.developer.bbee.englishmemory.domain.model.DailyStudy
+import jp.developer.bbee.englishmemory.domain.model.History
 import jp.developer.bbee.englishmemory.domain.model.Recent
 import jp.developer.bbee.englishmemory.domain.model.StudyData
 import jp.developer.bbee.englishmemory.domain.model.StudyStatus
@@ -22,8 +22,8 @@ interface EnglishMemoryDao {
     @Insert(entity = Recent::class, onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertUpdateRecent(recentList: List<Recent>)
 
-    @Insert(entity = DailyStudy::class, onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertUpdateDailyStudy(dailyStudyList: List<DailyStudy>)
+    @Insert(entity = History::class, onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertUpdateHistory(history: History)
 
     @Query("SELECT * FROM TranslateData")
     suspend fun getTranslateData(): List<TranslateData>
@@ -48,12 +48,35 @@ interface EnglishMemoryDao {
     """)
     suspend fun getStudyData(): List<StudyData>
 
-    @Query("SELECT * FROM StudyStatus WHERE english=:english and wordType=:wordType")
+    @Query("SELECT * FROM StudyStatus WHERE english = :english and wordType = :wordType")
     suspend fun getStudyStatus(english: String, wordType: String): StudyStatus
 
     @Query("SELECT * FROM Recent")
     fun getRecent(): Flow<List<Recent>>
 
-    @Query("SELECT * FROM DailyStudy")
-    suspend fun getDailyStudy(): List<DailyStudy>
+    @Query("SELECT * FROM History WHERE studyDate >= :dateTimeFrom")
+    fun getHistory(dateTimeFrom: String): Flow<List<History>>
+
+    @Query("""
+        SELECT
+            TranslateData.english AS english,
+            TranslateData.wordType AS wordType,
+            TranslateData.translateToJapanese AS translateToJapanese,
+            TranslateData.importance AS importance,
+            TranslateData.registrationDateUTC AS registrationDateUTC,
+            StudyStatus.numberOfQuestion AS numberOfQuestion,
+            StudyStatus.scoreRate AS scoreRate,
+            StudyStatus.countMiss AS countMiss,
+            StudyStatus.countCorrect AS countCorrect,
+            StudyStatus.isLatestAnswerCorrect AS isLatestAnswerCorrect,
+            StudyStatus.isFavorite AS isFavorite
+        FROM TranslateData
+        LEFT OUTER JOIN StudyStatus
+        ON  TranslateData.english = StudyStatus.english
+        AND TranslateData.wordType = StudyStatus.wordType
+        WHERE TranslateData.english = :english AND TranslateData.wordType = :wordType
+    """)
+    fun getStudyDataByWord(english: String, wordType: String): Flow<StudyData>
+
+
 }
