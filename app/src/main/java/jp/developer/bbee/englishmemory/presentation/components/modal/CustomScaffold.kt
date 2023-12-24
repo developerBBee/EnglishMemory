@@ -58,6 +58,7 @@ fun CustomScaffold(
 
     ModalNavigationDrawer(
         drawerState = drawerState,
+        gesturesEnabled = drawerOpenEnabled,
         drawerContent = {
             ModalDrawerSheet {
                 Text("Drawer title", modifier = Modifier.padding(16.dp))

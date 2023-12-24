@@ -1,5 +1,6 @@
 package jp.developer.bbee.englishmemory.testdouble
 
+import jp.developer.bbee.englishmemory.domain.model.History
 import jp.developer.bbee.englishmemory.domain.model.Recent
 import jp.developer.bbee.englishmemory.domain.model.StudyData
 import jp.developer.bbee.englishmemory.domain.model.StudyStatus
@@ -7,7 +8,6 @@ import jp.developer.bbee.englishmemory.domain.model.TranslateData
 import jp.developer.bbee.englishmemory.domain.repository.TranslateRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
 
 class FakeTranslateRepository : TranslateRepository {
     var failureGetTranslateDataByToken = false
@@ -38,18 +38,30 @@ class FakeTranslateRepository : TranslateRepository {
     }
 
     override suspend fun getStudyData(): List<StudyData> {
-        return emptyList()
+        TODO()
     }
 
     override suspend fun updateStudyStatus(studyStatus: StudyStatus) {
-        return
+        TODO()
     }
 
     override fun getRecent(): Flow<List<Recent>> {
-        return flow { emit(emptyList())  }
+        TODO()
     }
 
     override suspend fun updateRecent(recent: List<Recent>) {
-        return
+        TODO()
+    }
+
+    override suspend fun updateHistory(history: History) {
+        TODO()
+    }
+
+    override fun getHistory(dateTimeFrom: String): Flow<List<History>> {
+        TODO()
+    }
+
+    override fun getStudyDataByWord(english: String, wordType: String): Flow<StudyData> {
+        TODO()
     }
 }

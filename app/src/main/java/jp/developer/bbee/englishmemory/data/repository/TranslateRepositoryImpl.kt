@@ -2,6 +2,7 @@ package jp.developer.bbee.englishmemory.data.repository
 
 import jp.developer.bbee.englishmemory.data.source.local.EnglishMemoryDao
 import jp.developer.bbee.englishmemory.data.source.remote.api.AwsApi
+import jp.developer.bbee.englishmemory.domain.model.History
 import jp.developer.bbee.englishmemory.domain.model.Recent
 import jp.developer.bbee.englishmemory.domain.model.StudyData
 import jp.developer.bbee.englishmemory.domain.model.StudyStatus
@@ -40,5 +41,17 @@ class TranslateRepositoryImpl @Inject constructor(
 
     override suspend fun updateRecent(recent: List<Recent>) {
         dao.insertUpdateRecent(recent)
+    }
+
+    override suspend fun updateHistory(history: History) {
+        dao.insertUpdateHistory(history)
+    }
+
+    override fun getHistory(dateTimeFrom: String): Flow<List<History>> {
+        return dao.getHistory(dateTimeFrom)
+    }
+
+    override fun getStudyDataByWord(english: String, wordType: String): Flow<StudyData> {
+        return dao.getStudyDataByWord(english, wordType)
     }
 }

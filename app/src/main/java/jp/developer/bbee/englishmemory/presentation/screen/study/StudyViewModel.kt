@@ -8,8 +8,10 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jp.developer.bbee.englishmemory.common.response.Async
+import jp.developer.bbee.englishmemory.domain.model.History
 import jp.developer.bbee.englishmemory.domain.model.Recent
 import jp.developer.bbee.englishmemory.domain.model.StudyData
+import jp.developer.bbee.englishmemory.domain.usecase.AddHistoryUseCase
 import jp.developer.bbee.englishmemory.domain.usecase.GetRecentUseCase
 import jp.developer.bbee.englishmemory.domain.usecase.GetStudyDataUseCase
 import jp.developer.bbee.englishmemory.domain.usecase.UpdateRecentUseCase
@@ -20,6 +22,7 @@ import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 data class StudyState(
@@ -44,9 +47,10 @@ data class StudyState(
 @HiltViewModel
 class StudyViewModel @Inject constructor(
     getStudyDataUseCase: GetStudyDataUseCase,
-    private val getRecentUseCase: GetRecentUseCase,
+    getRecentUseCase: GetRecentUseCase,
     private val updateRecentUseCase: UpdateRecentUseCase,
     private val updateStudyStatusUseCase: UpdateStudyStatusUseCase,
+    private val addHistoryUseCase: AddHistoryUseCase,
 ) : ViewModel() {
     private var _state = MutableStateFlow(StudyState(isLoading = true))
     val state = _state.asStateFlow()
@@ -54,13 +58,12 @@ class StudyViewModel @Inject constructor(
     var isShowCorrect by mutableStateOf(false)
 
     val recent = getRecentUseCase().distinctUntilChanged()
-    private var recentData: List<Recent> = emptyList();
-    val a = viewModelScope.launch {
-        recent.collect {
+        .onEach {
             recentData = it
-            Log.d("MyTag", "recentdata: $recentData")
+            Log.d("MyTag", "recentData: $recentData")
         }
-    }
+
+    private var recentData: List<Recent> = emptyList()
 
     init {
         getStudyDataUseCase().onEach { response ->
@@ -105,11 +108,12 @@ class StudyViewModel @Inject constructor(
             val updateScoreRate = if (updateNumberOfQuestion > 0)
                 updateCountCorrect.toDouble() / updateNumberOfQuestion else 0.0
 
-            val updated = it.updateStudyData(
+            val updated = it.copy(
                 numberOfQuestion = updateNumberOfQuestion,
                 countCorrect = updateCountCorrect,
                 countMiss = updateCountMiss,
                 scoreRate = updateScoreRate,
+                isLatestAnswerCorrect = correct,
             )
             val newStudyData = _state.value.updateData(it, updated)
 
@@ -122,12 +126,23 @@ class StudyViewModel @Inject constructor(
 
             // 前回の問題の結果をDBに保存
             viewModelScope.launch {
-                updateStudyStatusUseCase(updated.getStudyStatus())
+                updateStudyStatusUseCase(updated.toStudyStatus())
             }
         }
     }
 
-    fun updateRecent(studyData: StudyData, correct: Boolean) {
+    private fun updateRecent(studyData: StudyData, correct: Boolean) {
+        val history = History(
+            studyDate = LocalDateTime.now(),
+            english = studyData.english,
+            wordType = studyData.wordType,
+            correct = correct,
+        )
+        viewModelScope.launch {
+            addHistoryUseCase(history)
+        }
+
+        // TODO RecentはHistoryを最新10件を取得すれば不要になる
         val addRecent = Recent(studyData, correct)
         addRecent.updateRecentList(recentData).let {
             viewModelScope.launch {

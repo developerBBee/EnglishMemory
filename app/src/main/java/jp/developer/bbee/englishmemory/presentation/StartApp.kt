@@ -4,10 +4,7 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
-import jp.developer.bbee.englishmemory.presentation.ScreenRoute.SettingScreen
-import jp.developer.bbee.englishmemory.presentation.ScreenRoute.StartApp
-import jp.developer.bbee.englishmemory.presentation.ScreenRoute.StudyScreen
-import jp.developer.bbee.englishmemory.presentation.ScreenRoute.TopScreen
+import jp.developer.bbee.englishmemory.presentation.screen.history.HistoryScreen
 import jp.developer.bbee.englishmemory.presentation.screen.setting.SettingScreen
 import jp.developer.bbee.englishmemory.presentation.screen.study.StudyScreen
 import jp.developer.bbee.englishmemory.presentation.screen.top.TopScreen
@@ -17,18 +14,21 @@ fun StartApp() {
     val navController = rememberNavController()
     NavHost(
         navController = navController,
-        startDestination = TopScreen.route,
+        startDestination = ScreenRoute.TopScreen.route,
     ) {
-        composable(StartApp.route) {
+        composable(ScreenRoute.StartApp.route) {
             StartApp()
         }
-        composable(TopScreen.route) {
+        composable(ScreenRoute.TopScreen.route) {
             TopScreen(navController = navController)
         }
-        composable(StudyScreen.route) {
+        composable(ScreenRoute.StudyScreen.route) {
             StudyScreen(navController = navController)
         }
-        composable(SettingScreen.route) {
+        composable(ScreenRoute.HistoryScreen.route) {
+            HistoryScreen(navController = navController)
+        }
+        composable(ScreenRoute.SettingScreen.route) {
             SettingScreen(navController = navController)
         }
     }

@@ -31,8 +31,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import jp.developer.bbee.englishmemory.domain.model.TranslateData
-import jp.developer.bbee.englishmemory.presentation.ScreenRoute.StartApp
-import jp.developer.bbee.englishmemory.presentation.ScreenRoute.StudyScreen
+import jp.developer.bbee.englishmemory.presentation.ScreenRoute
 import jp.developer.bbee.englishmemory.presentation.components.modal.CustomScaffold
 import jp.developer.bbee.englishmemory.presentation.ui.theme.AppTheme
 
@@ -96,10 +95,19 @@ fun TopContent(
                 ) {
                     TextButton(
                         enabled = viewModel.isReady,
-                        onClick = { navController.navigate(StudyScreen.route) }
+                        onClick = { navController.navigate(ScreenRoute.StudyScreen.route) }
                     ) {
                         Text(
                             text = "Start",
+                            style = MaterialTheme.typography.headlineLarge,
+                        )
+                    }
+                    TextButton(
+                        enabled = viewModel.isReady,
+                        onClick = { navController.navigate(ScreenRoute.HistoryScreen.route) }
+                    ) {
+                        Text(
+                            text = "History",
                             style = MaterialTheme.typography.headlineLarge,
                         )
                     }
@@ -115,7 +123,7 @@ fun TopContent(
                 }
             }
             if (viewModel.isRestart) {
-                navController.navigate(StartApp.route) {
+                navController.navigate(ScreenRoute.StartApp.route) {
                     popUpTo(navController.graph.id) {
                         inclusive = true
                     }

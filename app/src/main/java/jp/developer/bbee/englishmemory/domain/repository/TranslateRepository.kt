@@ -1,5 +1,6 @@
 package jp.developer.bbee.englishmemory.domain.repository
 
+import jp.developer.bbee.englishmemory.domain.model.History
 import jp.developer.bbee.englishmemory.domain.model.Recent
 import jp.developer.bbee.englishmemory.domain.model.StudyData
 import jp.developer.bbee.englishmemory.domain.model.StudyStatus
@@ -14,4 +15,7 @@ interface TranslateRepository {
     suspend fun updateStudyStatus(studyStatus: StudyStatus)
     fun getRecent(): Flow<List<Recent>>
     suspend fun updateRecent(recent: List<Recent>)
+    suspend fun updateHistory(history: History)
+    fun getHistory(dateTimeFrom: String): Flow<List<History>>
+    fun getStudyDataByWord(english: String, wordType: String): Flow<StudyData>
 }
