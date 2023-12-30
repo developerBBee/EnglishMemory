@@ -1,6 +1,5 @@
 package jp.developer.bbee.englishmemory.presentation.screen.study
 
-import android.util.Log
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -60,7 +59,6 @@ class StudyViewModel @Inject constructor(
     val recent = getRecentUseCase().distinctUntilChanged()
         .onEach {
             recentData = it
-            Log.d("MyTag", "recentData: $recentData")
         }
 
     private var recentData: List<Recent> = emptyList()

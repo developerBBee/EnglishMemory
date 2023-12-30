@@ -82,7 +82,7 @@ fun TopContent(
                         // 仮置き
                         imageVector = Icons.Default.Face,
                         modifier = Modifier.fillMaxSize(),
-                        contentDescription = "Provisional image",
+                        contentDescription = "アプリイメージ",
                         contentScale = ContentScale.Fit
                     )
                 }
@@ -108,6 +108,15 @@ fun TopContent(
                     ) {
                         Text(
                             text = "History",
+                            style = MaterialTheme.typography.headlineLarge,
+                        )
+                    }
+                    TextButton(
+                        enabled = viewModel.isReady,
+                        onClick = { navController.navigate(ScreenRoute.BookmarkScreen.route) }
+                    ) {
+                        Text(
+                            text = "Bookmark",
                             style = MaterialTheme.typography.headlineLarge,
                         )
                     }

@@ -1,9 +1,11 @@
 package jp.developer.bbee.englishmemory.presentation
 
 sealed class ScreenRoute(val route: String) {
-    object StartApp : ScreenRoute("start")
-    object TopScreen : ScreenRoute("top")
-    object StudyScreen : ScreenRoute("study")
-    object HistoryScreen : ScreenRoute("history")
-    object SettingScreen : ScreenRoute("setting")
+    data object StartApp : ScreenRoute("start")
+    data object TopScreen : ScreenRoute("top")
+    data object StudyScreen : ScreenRoute("study")
+    data object HistoryScreen : ScreenRoute("history")
+    data object BookmarkScreen : ScreenRoute("bookmark")
+    data object BookmarkSettingScreen : ScreenRoute("bookmark_setting")
+    data object SettingScreen : ScreenRoute("setting")
 }
