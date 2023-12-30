@@ -1,6 +1,7 @@
 package jp.developer.bbee.englishmemory.data.repository
 
 import jp.developer.bbee.englishmemory.data.source.datastore.PreferenceStore
+import jp.developer.bbee.englishmemory.domain.model.BookmarkPreferences
 import jp.developer.bbee.englishmemory.domain.model.SettingPreferences
 import jp.developer.bbee.englishmemory.domain.repository.PreferenceRepository
 import kotlinx.coroutines.flow.Flow
@@ -15,5 +16,12 @@ class PreferenceRepositoryImpl @Inject constructor(
 
     override suspend fun setPreferences(pref: SettingPreferences, flag: Boolean) {
         store.setPreferences(pref, flag)
+    }
+
+    override fun getBookmarkPreferencesFlow(): Flow<BookmarkPreferences> =
+        store.getBookmarkPreferencesFlow()
+
+    override suspend fun setBookmarkPreferences(prefs: BookmarkPreferences) {
+        store.setBookmarkPreferences(prefs)
     }
 }

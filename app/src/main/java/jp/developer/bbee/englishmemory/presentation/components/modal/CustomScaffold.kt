@@ -4,6 +4,7 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material.icons.filled.Menu
 import androidx.compose.material3.CenterAlignedTopAppBar
 import androidx.compose.material3.Divider
@@ -37,6 +38,7 @@ fun CustomScaffold(
     title: String,
     navController: NavController,
     drawerOpenEnabled: Boolean,
+    onClose: (() -> Unit)? = null,
     content: @Composable () -> Unit
 ) {
     val drawerState = rememberDrawerState(initialValue = DrawerValue.Closed)
@@ -111,20 +113,30 @@ fun CustomScaffold(
                 CenterAlignedTopAppBar(
                     title = { Text(text = title) },
                     actions = {
-                        // 右上メニューボタン
-                        IconButton(onClick = {
-                            if (drawerOpenEnabled) {
-                                scope.launch {
-                                    drawerState.apply {
-                                        if (isClosed) open() else close()
+                        if (onClose != null) {
+                            // 右上閉じるボタン
+                            IconButton(onClick = onClose) {
+                                Icon(
+                                    imageVector = Icons.Filled.Close,
+                                    contentDescription = "閉じる"
+                                )
+                            }
+                        } else {
+                            // 右上メニューボタン
+                            IconButton(onClick = {
+                                if (drawerOpenEnabled) {
+                                    scope.launch {
+                                        drawerState.apply {
+                                            if (isClosed) open() else close()
+                                        }
                                     }
                                 }
+                            }) {
+                                Icon(
+                                    imageVector = Icons.Filled.Menu,
+                                    contentDescription = "メニュードロワー"
+                                )
                             }
-                        }) {
-                            Icon(
-                                imageVector = Icons.Filled.Menu,
-                                contentDescription = "Localized description"
-                            )
                         }
                     },
                     scrollBehavior = scrollBehavior,

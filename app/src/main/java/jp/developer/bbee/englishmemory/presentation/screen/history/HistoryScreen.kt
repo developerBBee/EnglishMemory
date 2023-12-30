@@ -3,7 +3,6 @@ package jp.developer.bbee.englishmemory.presentation.screen.history
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -21,12 +20,12 @@ import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -202,7 +201,7 @@ fun BookmarkOrNotIcon(
     val icon = if (isBookmarked) {
         rememberVectorPainter(Icons.Filled.Star)
     } else {
-        painterResource(id = R.drawable.ic_baseline_star_outline_24)
+        painterResource(id = R.drawable.ic_outline_star_24)
     }
 
     val iconColor = if (isBookmarked) {
@@ -211,15 +210,12 @@ fun BookmarkOrNotIcon(
         Color.Gray
     }
 
-    Icon(
-        painter = icon,
-        contentDescription = "ブックマークアイコン",
-        tint = iconColor,
-        modifier = Modifier.size(iconSize.dp)
-            .clickable(
-                // アイコンに合っていないエフェクトを消すための設定 TODO:アイコンに合ったエフェクトにする
-                interactionSource = remember { MutableInteractionSource() },
-                indication = null,
-            ) { onBookmarkClick(!isBookmarked) },
-    )
+    IconButton(onClick = { onBookmarkClick(!isBookmarked) }) {
+        Icon(
+            painter = icon,
+            contentDescription = "ブックマーク",
+            tint = iconColor,
+            modifier = Modifier.size(iconSize.dp)
+        )
+    }
 }
