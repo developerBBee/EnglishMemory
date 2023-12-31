@@ -5,22 +5,18 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Clear
 import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -29,17 +25,15 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.rememberVectorPainter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
-import jp.developer.bbee.englishmemory.R
 import jp.developer.bbee.englishmemory.common.constant.DATE_JP_FORMATTER
 import jp.developer.bbee.englishmemory.common.constant.TIME_JP_FORMATTER
 import jp.developer.bbee.englishmemory.domain.model.History
 import jp.developer.bbee.englishmemory.presentation.ScreenRoute
+import jp.developer.bbee.englishmemory.presentation.components.dialog.StudyDataDialog
 import jp.developer.bbee.englishmemory.presentation.components.modal.CustomScaffold
 
 @Composable
@@ -65,35 +59,11 @@ fun HistoryScreen(
 
     // Show translate data on dialog for selected history
     historyState.selectedStudyData?.let { selectedData ->
-        AlertDialog(
-            onDismissRequest = { viewModel.unSelectHistory() },
-            confirmButton = {
-                TextButton(
-                    onClick = { viewModel.unSelectHistory() }) {
-                    Text(text = "閉じる")
-                }
-            },
-            text = {
-                Column {
-                    Row(
-                        verticalAlignment = Alignment.CenterVertically,
-                    ) {
-                        BookmarkOrNotIcon(isBookmarked = selectedData.isFavorite) {
-                            viewModel.updateStudyStatus(
-                                selectedData.copy(isFavorite = it)
-                            )
-                        }
-                        Text(
-                            text = "${selectedData.english}  [${selectedData.wordType}]",
-                            style = MaterialTheme.typography.titleLarge,
-                            modifier = Modifier.padding(16.dp)
-                        )
-                    }
-                    Text(
-                        text = selectedData.translateToJapanese,
-                        modifier = Modifier.padding(16.dp)
-                    )
-                }
+        StudyDataDialog(
+            studyData = selectedData,
+            onDismiss = { viewModel.unSelectHistory() },
+            onClickBookmark = { bookmark ->
+                viewModel.updateStudyStatus(selectedData.copy(isFavorite = bookmark))
             }
         )
     }
@@ -188,34 +158,6 @@ fun CorrectOrNotIcon(
             imageVector = Icons.Default.Clear,
             contentDescription = "不正解",
             tint = Color.Red
-        )
-    }
-}
-
-@Composable
-fun BookmarkOrNotIcon(
-    isBookmarked: Boolean,
-    iconSize: Int = 36,
-    onBookmarkClick: (Boolean) -> Unit,
-) {
-    val icon = if (isBookmarked) {
-        rememberVectorPainter(Icons.Filled.Star)
-    } else {
-        painterResource(id = R.drawable.ic_outline_star_24)
-    }
-
-    val iconColor = if (isBookmarked) {
-        Color.Yellow
-    } else {
-        Color.Gray
-    }
-
-    IconButton(onClick = { onBookmarkClick(!isBookmarked) }) {
-        Icon(
-            painter = icon,
-            contentDescription = "ブックマーク",
-            tint = iconColor,
-            modifier = Modifier.size(iconSize.dp)
         )
     }
 }

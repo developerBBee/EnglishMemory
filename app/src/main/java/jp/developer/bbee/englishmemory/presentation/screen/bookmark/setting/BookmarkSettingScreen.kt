@@ -1,6 +1,5 @@
 package jp.developer.bbee.englishmemory.presentation.screen.bookmark.setting
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -24,7 +23,6 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -51,9 +49,6 @@ fun BookmarkSettingScreen(
     val isSaved = bookmarkSettingState.isSaved
     /*TODO エラー表示*/
 
-    SideEffect {
-        Log.d("BookmarkSetting", "SideEffect: isLoading=$isLoading isSaved=$isSaved")
-    }
     LaunchedEffect(isSaved) {
         if (isSaved) {
             navController.popBackStack()
