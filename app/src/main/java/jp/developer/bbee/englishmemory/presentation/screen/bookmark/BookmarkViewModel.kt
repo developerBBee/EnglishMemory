@@ -5,7 +5,9 @@ import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import jp.developer.bbee.englishmemory.common.response.Async
 import jp.developer.bbee.englishmemory.domain.model.BookmarkPreferences
-import jp.developer.bbee.englishmemory.domain.model.BookmarkType
+import jp.developer.bbee.englishmemory.domain.model.FilterKeyType
+import jp.developer.bbee.englishmemory.domain.model.Order
+import jp.developer.bbee.englishmemory.domain.model.SortKey
 import jp.developer.bbee.englishmemory.domain.model.StudyData
 import jp.developer.bbee.englishmemory.domain.usecase.GetBookmarkPreferenceUseCase
 import jp.developer.bbee.englishmemory.domain.usecase.GetStudyDataUseCase
@@ -18,14 +20,15 @@ import javax.inject.Inject
 
 data class BookmarkState(
     val studyData: List<StudyData>? = null,
-    val listParams: ListParams = ListParams(),
+    val filterPrefs: FilterPrefs = FilterPrefs(),
+    val sortPrefs: Map<SortKey, Order> = emptyMap(),
     val isLoading: Boolean = false,
     val error: String? = null,
 )
 
-data class ListParams(
-    val filter: Filters = Filters(),
+data class FilterPrefs(
     val search: String = "",
+    val filter: Filters = Filters(),
 )
 
 data class Filters(
@@ -34,26 +37,12 @@ data class Filters(
     val isFavorite: Boolean = true,
 )
 
-enum class SortType(var order: Order = Order.ASC) {
-    ENGLISH,
-    NUMBER_OF_QUESTION,
-    SCORE_RATE,
-    COUNT_MISS,
-    COUNT_CORRECT,
-}
-
-enum class Order {
-    NONE,
-    ASC,
-    DESC,
-}
-
 val SORT_TYPE_PRIORITIES = listOf(
-    SortType.ENGLISH,
-    SortType.NUMBER_OF_QUESTION,
-    SortType.SCORE_RATE,
-    SortType.COUNT_MISS,
-    SortType.COUNT_CORRECT,
+    SortKey.COUNT_CORRECT,
+    SortKey.COUNT_MISS,
+    SortKey.SCORE_RATE,
+    SortKey.NUMBER_OF_QUESTION,
+    SortKey.ENGLISH,
 )
 
 @HiltViewModel
@@ -72,91 +61,90 @@ class BookmarkViewModel @Inject constructor(
             applyPreferences(prefs)
             studyData
         }.onEach {
-                when(it) {
-                    is Async.Loading -> {
-                        _state.value = BookmarkState(isLoading = true)
-                    }
-                    is Async.Success -> {
-                        _state.value = BookmarkState(
-                            studyData = it.data?.filterAndSort(_state.value.listParams)
-                        )
-                    }
-                    is Async.Failure -> {
-                        _state.value = BookmarkState(error = it.error)
-                    }
+            when(it) {
+                is Async.Loading -> {
+                    _state.value = BookmarkState(isLoading = true)
                 }
-            }.launchIn(viewModelScope)
-
-        getBookmarkPreferenceUseCase()
-            .onEach {
-
-            }.launchIn(viewModelScope)
-    }
-
-    fun setOrder(sortType: SortType, order: Order) {
-        /* TODO 降順昇順の追加 */
-        sortType.order = order
+                is Async.Success -> {
+                    _state.value = BookmarkState(
+                        studyData = it.data?.filterAndSort(
+                            filterPrefs = _state.value.filterPrefs,
+                            sortPrefs = _state.value.sortPrefs
+                        )
+                    )
+                }
+                is Async.Failure -> {
+                    _state.value = BookmarkState(error = it.error)
+                }
+            }
+        }.launchIn(viewModelScope)
     }
 
     private fun applyPreferences(prefs: BookmarkPreferences) {
         val word = prefs.searchWord
-        val importance = prefs.bookmarkBooleans.filter { it.key.type == BookmarkType.IMPORTANCE }
+        val importance = prefs.bookmarkBooleans.filter { it.key.type == FilterKeyType.IMPORTANCE }
             .filter { it.value }.map { it.key.displayName }.toSet()
-        val wordType = prefs.bookmarkBooleans.filter { it.key.type == BookmarkType.WORD_TYPE }
+        val wordType = prefs.bookmarkBooleans.filter { it.key.type == FilterKeyType.WORD_TYPE }
             .filter { it.value }.map { it.key.displayName }.toSet()
 
         _state.value = state.value.copy(
-            listParams = ListParams(
+            filterPrefs = FilterPrefs(
                 filter = Filters(
                     importance = importance,
                     wordType = wordType,
                 ),
                 search = word,
-            )
+            ),
+            sortPrefs = prefs.sortPrefs
         )
     }
 }
 
-internal fun List<StudyData>.filterAndSort(listParams: ListParams): List<StudyData> {
-    return this.filterByParams(listParams).sort()
+internal fun List<StudyData>.filterAndSort(
+    filterPrefs: FilterPrefs,
+    sortPrefs: Map<SortKey, Order>,
+): List<StudyData> {
+    return this.filterByParams(filterPrefs).sort(sortPrefs)
 }
 
-internal fun List<StudyData>.filterByParams(listParams: ListParams): List<StudyData> {
+internal fun List<StudyData>.filterByParams(filterPrefs: FilterPrefs): List<StudyData> {
     return this.filter {
-        it.english.contains(listParams.search)
-                && listParams.filter.importance?.contains(it.importance) ?: true
-                && listParams.filter.wordType?.contains(it.wordType) ?: true
-                && listParams.filter.isFavorite == it.isFavorite
+        it.english.contains(filterPrefs.search)
+                && filterPrefs.filter.importance?.contains(it.importance) ?: true
+                && filterPrefs.filter.wordType?.contains(it.wordType) ?: true
+                && filterPrefs.filter.isFavorite == it.isFavorite
     }
 }
 
-internal fun List<StudyData>.sort(): List<StudyData> {
+internal fun List<StudyData>.sort(sortPrefs: Map<SortKey, Order>): List<StudyData> {
     var newStudyDataList = this
     SORT_TYPE_PRIORITIES.forEach {
-        newStudyDataList = newStudyDataList.sort(it)
+        newStudyDataList = newStudyDataList.sort(
+            sortKey = it,
+            order = checkNotNull(sortPrefs[it])
+        )
     }
     return newStudyDataList
 }
 
-internal fun List<StudyData>.sort(sortType: SortType): List<StudyData> {
-    val order = sortType.order
-
-    return when(sortType) {
-        SortType.ENGLISH -> {
-            this.orderBy(order = order) { it.english }
-        }
-        SortType.NUMBER_OF_QUESTION -> {
-            this.orderBy(order = order) { it.numberOfQuestion }
-        }
-        SortType.SCORE_RATE -> {
-            this.orderBy(order = order) { it.scoreRate }
-        }
-        SortType.COUNT_MISS -> {
-            this.orderBy(order = order) { it.countMiss }
-        }
-        SortType.COUNT_CORRECT -> {
-            this.orderBy(order = order) { it.countCorrect }
-        }
+internal fun List<StudyData>.sort(
+    sortKey: SortKey,
+    order: Order
+): List<StudyData> = when(sortKey) {
+    SortKey.ENGLISH -> {
+        this.orderBy(order = order) { it.english }
+    }
+    SortKey.NUMBER_OF_QUESTION -> {
+        this.orderBy(order = order) { it.numberOfQuestion }
+    }
+    SortKey.SCORE_RATE -> {
+        this.orderBy(order = order) { it.scoreRate }
+    }
+    SortKey.COUNT_MISS -> {
+        this.orderBy(order = order) { it.countMiss }
+    }
+    SortKey.COUNT_CORRECT -> {
+        this.orderBy(order = order) { it.countCorrect }
     }
 }
 
@@ -165,11 +153,8 @@ internal fun <T : Comparable<T>> List<StudyData>.orderBy(
     selector: (StudyData) -> T?
 ): List<StudyData> {
     return when (order) {
-        Order.NONE ->
-            this
-        Order.ASC ->
-            this.sortedBy(selector)
-        Order.DESC ->
-            this.sortedByDescending(selector)
+        Order.NONE -> this
+        Order.ASC -> this.sortedBy(selector)
+        Order.DESC -> this.sortedByDescending(selector)
     }
 }
