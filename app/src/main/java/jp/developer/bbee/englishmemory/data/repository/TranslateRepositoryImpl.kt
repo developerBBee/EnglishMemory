@@ -27,7 +27,7 @@ class TranslateRepositoryImpl @Inject constructor(
         dao.insertUpdateTranslateData(translateDataList)
     }
 
-    override suspend fun getStudyData(): List<StudyData> {
+    override fun getStudyData(): Flow<List<StudyData>> {
         return dao.getStudyData()
     }
 

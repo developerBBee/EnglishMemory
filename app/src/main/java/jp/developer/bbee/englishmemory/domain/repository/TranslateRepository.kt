@@ -11,7 +11,7 @@ interface TranslateRepository {
     suspend fun getTranslateData(token: String): List<TranslateData>
     suspend fun getTranslateData(): List<TranslateData>
     suspend fun saveTranslateData(translateDataList: List<TranslateData>)
-    suspend fun getStudyData(): List<StudyData>
+    fun getStudyData(): Flow<List<StudyData>>
     suspend fun updateStudyStatus(studyStatus: StudyStatus)
     fun getRecent(): Flow<List<Recent>>
     suspend fun updateRecent(recent: List<Recent>)

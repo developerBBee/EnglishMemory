@@ -6,7 +6,6 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
-import jp.developer.bbee.englishmemory.common.response.Async
 import jp.developer.bbee.englishmemory.domain.model.History
 import jp.developer.bbee.englishmemory.domain.model.Recent
 import jp.developer.bbee.englishmemory.domain.model.StudyData
@@ -20,6 +19,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
+import kotlinx.coroutines.flow.take
 import kotlinx.coroutines.launch
 import java.time.LocalDateTime
 import javax.inject.Inject
@@ -64,31 +64,23 @@ class StudyViewModel @Inject constructor(
     private var recentData: List<Recent> = emptyList()
 
     init {
-        getStudyDataUseCase().onEach { response ->
-            when (response) {
-                is Async.Success -> {
-                    response.data?.let {
-                        val question = getQuestion(it)
-                        if (question != null) {
-                            _state.value = StudyState(
-                                studyData = it,
-                                questionData = question,
-                            )
-                        } else {
-                            _state.value = StudyState(error = "出題できる問題がありません")
-                        }
+        _state.value = StudyState(isLoading = true)
+
+        getStudyDataUseCase()
+            .take(1)
+            .onEach { studyDataList ->
+                studyDataList.let {
+                    val question = getQuestion(it)
+                    if (question != null) {
+                        _state.value = StudyState(
+                            studyData = it,
+                            questionData = question,
+                        )
+                    } else {
+                        _state.value = StudyState(error = "出題できる問題がありません")
                     }
                 }
-
-                is Async.Failure -> {
-                    _state.value = StudyState(error = response.error)
-                }
-
-                is Async.Loading -> {
-                    _state.value = StudyState(isLoading = true)
-                }
-            }
-        }.launchIn(viewModelScope)
+            }.launchIn(viewModelScope)
     }
 
     // 出題

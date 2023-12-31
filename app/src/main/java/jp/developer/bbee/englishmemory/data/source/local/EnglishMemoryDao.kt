@@ -46,7 +46,7 @@ interface EnglishMemoryDao {
         ON  TranslateData.english = StudyStatus.english
         AND TranslateData.wordType = StudyStatus.wordType
     """)
-    suspend fun getStudyData(): List<StudyData>
+    fun getStudyData(): Flow<List<StudyData>>
 
     @Query("SELECT * FROM StudyStatus WHERE english = :english and wordType = :wordType")
     suspend fun getStudyStatus(english: String, wordType: String): StudyStatus

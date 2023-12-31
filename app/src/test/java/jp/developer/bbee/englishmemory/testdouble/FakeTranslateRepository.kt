@@ -37,7 +37,7 @@ class FakeTranslateRepository : TranslateRepository {
         return
     }
 
-    override suspend fun getStudyData(): List<StudyData> {
+    override fun getStudyData(): Flow<List<StudyData>> {
         TODO()
     }
 

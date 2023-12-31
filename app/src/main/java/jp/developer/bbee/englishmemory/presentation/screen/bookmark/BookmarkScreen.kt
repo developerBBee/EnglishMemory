@@ -1,5 +1,6 @@
 package jp.developer.bbee.englishmemory.presentation.screen.bookmark
 
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -22,7 +23,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import jp.developer.bbee.englishmemory.domain.model.StudyData
 import jp.developer.bbee.englishmemory.presentation.ScreenRoute
+import jp.developer.bbee.englishmemory.presentation.components.dialog.StudyDataDialog
 import jp.developer.bbee.englishmemory.presentation.components.modal.CustomScaffold
 import kotlin.math.round
 
@@ -44,7 +47,19 @@ fun BookmarkScreen(
     ) {
         BookmarkContent(
             navController = navController,
-            bookmarkState = bookmarkState
+            bookmarkState = bookmarkState,
+            onItemClick = { studyData -> viewModel.selectStudyData(studyData) },
+        )
+    }
+
+    // Show translate data on dialog for selected history
+    bookmarkState.selectedStudyData?.let { selectedData ->
+        StudyDataDialog(
+            studyData = selectedData,
+            onDismiss = { viewModel.unSelectStudyData() },
+            onClickBookmark = { bookmark ->
+                viewModel.updateStudyStatus(selectedData.copy(isFavorite = bookmark))
+            }
         )
     }
 }
@@ -53,6 +68,7 @@ fun BookmarkScreen(
 fun BookmarkContent(
     navController: NavController,
     bookmarkState: BookmarkState,
+    onItemClick: (StudyData) -> Unit,
 ) {
     val studyDataList = bookmarkState.studyData ?: emptyList()
 
@@ -81,7 +97,8 @@ fun BookmarkContent(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp),
+                        .padding(8.dp)
+                        .clickable { onItemClick(it) },
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
