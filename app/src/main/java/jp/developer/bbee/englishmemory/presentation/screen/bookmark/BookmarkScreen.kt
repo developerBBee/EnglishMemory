@@ -9,7 +9,6 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
-import androidx.compose.material.icons.filled.Star
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -18,13 +17,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import jp.developer.bbee.englishmemory.presentation.ScreenRoute
 import jp.developer.bbee.englishmemory.presentation.components.modal.CustomScaffold
+import kotlin.math.round
 
 @Composable
 fun BookmarkScreen(
@@ -66,12 +66,6 @@ fun BookmarkContent(
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Text(
-                        modifier = Modifier
-                            .padding(horizontal = 8.dp),
-                        text = "検索",
-                        style = MaterialTheme.typography.titleLarge,
-                    )
                     IconButton(onClick = {
                         navController.navigate(ScreenRoute.BookmarkSettingScreen.route)
                     }) {
@@ -87,24 +81,29 @@ fun BookmarkContent(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 8.dp),
+                        .padding(8.dp),
+                    horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         modifier = Modifier.weight(2f),
                         style = MaterialTheme.typography.titleLarge,
-                        text = "${it.english} [${it.wordType}]"
+                        text = "[${it.wordType}] ${it.english}",
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
                     )
-                    Text(
-                        modifier = Modifier.padding(horizontal = 8.dp),
-                        style = MaterialTheme.typography.titleLarge,
-                        text = "正答率 ${it.scoreRate}"
-                    )
-                    IconButton(onClick = { /*TODO ブックマーク解除処理*/ }) {
-                        Icon(
-                            imageVector = Icons.Filled.Star,
-                            contentDescription = "ブックマーク",
-                            tint = Color.Yellow,
+                    Row(
+                        modifier = Modifier.weight(1f),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            style = MaterialTheme.typography.titleMedium,
+                            text = "正答率"
+                        )
+                        Text(
+                            style = MaterialTheme.typography.titleLarge,
+                            text = "${round(it.scoreRate * 1000) / 10}%"
                         )
                     }
                 }

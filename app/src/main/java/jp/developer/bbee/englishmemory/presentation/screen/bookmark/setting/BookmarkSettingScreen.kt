@@ -16,11 +16,15 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
 import androidx.compose.material3.Checkbox
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Divider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -31,7 +35,10 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import jp.developer.bbee.englishmemory.R
-import jp.developer.bbee.englishmemory.domain.model.BookmarkKey
+import jp.developer.bbee.englishmemory.domain.model.FilterKey
+import jp.developer.bbee.englishmemory.domain.model.Order
+import jp.developer.bbee.englishmemory.domain.model.SearchKey
+import jp.developer.bbee.englishmemory.domain.model.SortKey
 import jp.developer.bbee.englishmemory.presentation.components.modal.CustomScaffold
 
 @Composable
@@ -41,21 +48,31 @@ fun BookmarkSettingScreen(
 ) {
     val bookmarkSettingState by viewModel.state.collectAsStateWithLifecycle()
     val isLoading = bookmarkSettingState.isLoading
+    val isSaved = bookmarkSettingState.isSaved
     /*TODO エラー表示*/
 
-    BackHandler(enabled = !isLoading) { back(navController, viewModel) }
+    SideEffect {
+        Log.d("BookmarkSetting", "SideEffect: isLoading=$isLoading isSaved=$isSaved")
+    }
+    LaunchedEffect(isSaved) {
+        if (isSaved) {
+            navController.popBackStack()
+        }
+    }
+    BackHandler(enabled = !isLoading) { viewModel.saveBookmarkPreferences() }
 
     val title = "Bookmark Setting"
     CustomScaffold(
         title = title,
         navController = navController,
-        onClose = { if (!isLoading) back(navController, viewModel) },
+        onClose = { if (!isLoading) viewModel.saveBookmarkPreferences() },
         drawerOpenEnabled = false
     ) {
         BookmarkSettingContent(
             bookmarkSettingState = bookmarkSettingState,
-            onSearchChanged = { w -> viewModel.updatePreferences(word = w) },
-            onCheckedChange = { k, v -> viewModel.updatePreferences(key = k, value = v) },
+            onSearchChanged = { w -> viewModel.updateSearchPreferences(word = w) },
+            onCheckedChange = { k, v -> viewModel.updateFilterPreferences(key = k, value = v) },
+            onToggleChange = { k, v -> viewModel.updateSortPreferences(key = k, value = v) },
         )
     }
 }
@@ -64,12 +81,14 @@ fun BookmarkSettingScreen(
 fun BookmarkSettingContent(
     bookmarkSettingState: BookmarkSettingState,
     onSearchChanged: (String) -> Unit,
-    onCheckedChange: (BookmarkKey, Boolean) -> Unit,
+    onCheckedChange: (FilterKey, Boolean) -> Unit,
+    onToggleChange: (SortKey, Order) -> Unit,
 ) {
     val isLoading = bookmarkSettingState.isLoading
     val prefs = bookmarkSettingState.preferences
     val searchWord = prefs?.searchWord ?: ""
     val checkedMap = prefs?.bookmarkBooleans ?: emptyMap()
+    val sortPrefs = prefs?.sortPrefs ?: emptyMap()
 
     if (isLoading) {
         Box(modifier = Modifier.fillMaxSize()) {
@@ -94,7 +113,7 @@ fun BookmarkSettingContent(
                         contentDescription = "検索"
                     )
                     Text(
-                        text = "英単語検索",
+                        text = SearchKey.SEARCH_WORD.displayName,
                         style = MaterialTheme.typography.titleLarge,
                     )
                 }
@@ -131,9 +150,9 @@ fun BookmarkSettingContent(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,
                 ) {
-                    BookmarkKey.IMPORTANCE_RANK_A.PreferenceByKey(checkedMap, onCheckedChange)
-                    BookmarkKey.IMPORTANCE_RANK_B.PreferenceByKey(checkedMap, onCheckedChange)
-                    BookmarkKey.IMPORTANCE_RANK_C.PreferenceByKey(checkedMap, onCheckedChange)
+                    FilterKey.IMPORTANCE_RANK_A.PreferenceCheckBox(checkedMap, onCheckedChange)
+                    FilterKey.IMPORTANCE_RANK_B.PreferenceCheckBox(checkedMap, onCheckedChange)
+                    FilterKey.IMPORTANCE_RANK_C.PreferenceCheckBox(checkedMap, onCheckedChange)
                 }
             }
         }
@@ -158,25 +177,56 @@ fun BookmarkSettingContent(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,
                 ) {
-                    BookmarkKey.WORD_TYPE_NOUN.PreferenceByKey(checkedMap, onCheckedChange)
-                    BookmarkKey.WORD_TYPE_PRONOUN.PreferenceByKey(checkedMap, onCheckedChange)
-                    BookmarkKey.WORD_TYPE_VERB.PreferenceByKey(checkedMap, onCheckedChange)
+                    FilterKey.WORD_TYPE_NOUN.PreferenceCheckBox(checkedMap, onCheckedChange)
+                    FilterKey.WORD_TYPE_PRONOUN.PreferenceCheckBox(checkedMap, onCheckedChange)
+                    FilterKey.WORD_TYPE_VERB.PreferenceCheckBox(checkedMap, onCheckedChange)
                 }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,
                 ) {
-                    BookmarkKey.WORD_TYPE_ADJECTIVE.PreferenceByKey(checkedMap, onCheckedChange)
-                    BookmarkKey.WORD_TYPE_ADVERB.PreferenceByKey(checkedMap, onCheckedChange)
-                    BookmarkKey.WORD_TYPE_AUXILIARY_VERB.PreferenceByKey(checkedMap, onCheckedChange)
+                    FilterKey.WORD_TYPE_ADJECTIVE.PreferenceCheckBox(checkedMap, onCheckedChange)
+                    FilterKey.WORD_TYPE_ADVERB.PreferenceCheckBox(checkedMap, onCheckedChange)
+                    FilterKey.WORD_TYPE_AUXILIARY_VERB.PreferenceCheckBox(checkedMap, onCheckedChange)
                 }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.Center,
                 ) {
-                    BookmarkKey.WORD_TYPE_PREPOSITION.PreferenceByKey(checkedMap, onCheckedChange)
-                    BookmarkKey.WORD_TYPE_INTERJECTION.PreferenceByKey(checkedMap, onCheckedChange)
-                    BookmarkKey.WORD_TYPE_CONJUNCTION.PreferenceByKey(checkedMap, onCheckedChange)
+                    FilterKey.WORD_TYPE_PREPOSITION.PreferenceCheckBox(checkedMap, onCheckedChange)
+                    FilterKey.WORD_TYPE_INTERJECTION.PreferenceCheckBox(checkedMap, onCheckedChange)
+                    FilterKey.WORD_TYPE_CONJUNCTION.PreferenceCheckBox(checkedMap, onCheckedChange)
+                }
+            }
+        }
+
+        item { Divider() }
+
+        item {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
+            ) {
+                Row(verticalAlignment = Alignment.CenterVertically) {
+                    Icon(
+                        painter = painterResource(R.drawable.ic_sort_24),
+                        contentDescription = "ソート"
+                    )
+                    Text(
+                        text = "並び替え",
+                        style = MaterialTheme.typography.titleLarge,
+                    )
+                }
+                Column(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    SortKey.ENGLISH.PreferenceSort(sortPrefs, onToggleChange)
+                    SortKey.NUMBER_OF_QUESTION.PreferenceSort(sortPrefs, onToggleChange)
+                    SortKey.SCORE_RATE.PreferenceSort(sortPrefs, onToggleChange)
+                    SortKey.COUNT_MISS.PreferenceSort(sortPrefs, onToggleChange)
+                    SortKey.COUNT_CORRECT.PreferenceSort(sortPrefs, onToggleChange)
                 }
             }
         }
@@ -185,7 +235,7 @@ fun BookmarkSettingContent(
 
 @Composable
 fun TextAndCheckbox(
-    key: BookmarkKey,
+    key: FilterKey,
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
 ) {
@@ -208,9 +258,9 @@ fun TextAndCheckbox(
 }
 
 @Composable
-internal fun BookmarkKey.PreferenceByKey(
-    checkedMap: Map<BookmarkKey, Boolean>,
-    onCheckedChange: (BookmarkKey, Boolean) -> Unit,
+internal fun FilterKey.PreferenceCheckBox(
+    checkedMap: Map<FilterKey, Boolean>,
+    onCheckedChange: (FilterKey, Boolean) -> Unit,
 ) {
     TextAndCheckbox(
         key = this,
@@ -220,11 +270,59 @@ internal fun BookmarkKey.PreferenceByKey(
     }
 }
 
-private fun back(
-    navController: NavController,
-    viewModel: BookmarkSettingViewModel,
+@Composable
+fun TextAndToggleIcon(
+    sortKey: SortKey,
+    order: Order,
+    onOrderChange: (Order) -> Unit,
 ) {
-    Log.d("BookmarkSettingScreen", "back")
-    viewModel.saveBookmarkPreferences()
-    navController.popBackStack()
+    val newOrder = order.next()
+
+    Row(
+        modifier = Modifier
+            .clip(RoundedCornerShape(8.dp))
+            .clickable { onOrderChange(newOrder) },
+        verticalAlignment = Alignment.CenterVertically,
+    ) {
+        Text(
+            modifier = Modifier.padding(start = 4.dp),
+            text = sortKey.displayName,
+            style = MaterialTheme.typography.titleLarge,
+        )
+        IconButton(onClick = { onOrderChange(newOrder) }) {
+            when (order) {
+                Order.NONE -> Icon(
+                    painter = painterResource(R.drawable.ic_horizontal_rule_24),
+                    contentDescription = "順不同"
+                )
+                Order.ASC -> Icon(
+                    painter = painterResource(R.drawable.ic_arrow_upward_24),
+                    contentDescription = "昇順"
+                )
+                Order.DESC -> Icon(
+                    painter = painterResource(R.drawable.ic_arrow_downward_24),
+                    contentDescription = "降順"
+                )
+            }
+        }
+    }
+}
+
+@Composable
+internal fun SortKey.PreferenceSort(
+    sortPrefs: Map<SortKey, Order>,
+    onToggleChange: (SortKey, Order) -> Unit,
+) {
+    TextAndToggleIcon(
+        sortKey = this,
+        order = checkNotNull(sortPrefs[this])
+    ) { newOrder ->
+        onToggleChange(this, newOrder)
+    }
+}
+
+internal fun Order.next(): Order = when (this) {
+    Order.NONE -> Order.ASC
+    Order.ASC -> Order.DESC
+    Order.DESC -> Order.NONE
 }
