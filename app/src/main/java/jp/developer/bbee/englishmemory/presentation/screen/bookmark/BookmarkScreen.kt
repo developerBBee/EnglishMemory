@@ -4,12 +4,14 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Search
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -19,7 +21,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -27,6 +28,7 @@ import jp.developer.bbee.englishmemory.domain.model.StudyData
 import jp.developer.bbee.englishmemory.presentation.ScreenRoute
 import jp.developer.bbee.englishmemory.presentation.components.dialog.StudyDataDialog
 import jp.developer.bbee.englishmemory.presentation.components.modal.CustomScaffold
+import jp.developer.bbee.englishmemory.presentation.ui.theme.AppTheme
 import kotlin.math.round
 
 @Composable
@@ -35,9 +37,11 @@ fun BookmarkScreen(
     viewModel: BookmarkViewModel = hiltViewModel()
 ) {
     val bookmarkState by viewModel.state.collectAsStateWithLifecycle()
+    val isLoading = bookmarkState.isLoading
+    val error = bookmarkState.error
     /*TODO エラー表示*/
 
-    val drawerOpenEnabled = !bookmarkState.isLoading && bookmarkState.error.isNullOrBlank()
+    val drawerOpenEnabled = !isLoading && error.isNullOrBlank()
 
     val title = "Bookmark"
     CustomScaffold(
@@ -45,6 +49,12 @@ fun BookmarkScreen(
         navController = navController,
         drawerOpenEnabled = drawerOpenEnabled
     ) {
+        if (isLoading) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+        }
+
         BookmarkContent(
             navController = navController,
             bookmarkState = bookmarkState,
@@ -78,7 +88,7 @@ fun BookmarkContent(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = 8.dp),
+                        .padding(vertical = AppTheme.dimens.small),
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -97,7 +107,7 @@ fun BookmarkContent(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(8.dp)
+                        .padding(AppTheme.dimens.small)
                         .clickable { onItemClick(it) },
                     horizontalArrangement = Arrangement.SpaceBetween,
                     verticalAlignment = Alignment.CenterVertically

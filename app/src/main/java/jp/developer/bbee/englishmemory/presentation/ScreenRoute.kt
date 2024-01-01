@@ -5,6 +5,7 @@ sealed class ScreenRoute(val route: String) {
     data object TopScreen : ScreenRoute("top")
     data object StudyScreen : ScreenRoute("study")
     data object HistoryScreen : ScreenRoute("history")
+    data object ScoreScreen : ScreenRoute("score")
     data object BookmarkScreen : ScreenRoute("bookmark")
     data object BookmarkSettingScreen : ScreenRoute("bookmark_setting")
     data object SettingScreen : ScreenRoute("setting")

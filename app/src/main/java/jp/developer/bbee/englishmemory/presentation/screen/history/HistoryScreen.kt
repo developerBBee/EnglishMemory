@@ -25,7 +25,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -35,6 +34,7 @@ import jp.developer.bbee.englishmemory.domain.model.History
 import jp.developer.bbee.englishmemory.presentation.ScreenRoute
 import jp.developer.bbee.englishmemory.presentation.components.dialog.StudyDataDialog
 import jp.developer.bbee.englishmemory.presentation.components.modal.CustomScaffold
+import jp.developer.bbee.englishmemory.presentation.ui.theme.AppTheme
 
 @Composable
 fun HistoryScreen(
@@ -91,7 +91,7 @@ fun HistoryContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(color = MaterialTheme.colorScheme.surface)
-                            .padding(16.dp),
+                            .padding(AppTheme.dimens.medium),
                         horizontalArrangement = Arrangement.Center,
                     ) {
                         Text(
@@ -105,7 +105,7 @@ fun HistoryContent(
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(16.dp)
+                            .padding(AppTheme.dimens.medium)
                             .clickable(true) { onItemClick(history) },
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,

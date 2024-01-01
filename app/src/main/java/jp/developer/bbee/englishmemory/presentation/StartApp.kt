@@ -7,6 +7,7 @@ import androidx.navigation.compose.rememberNavController
 import jp.developer.bbee.englishmemory.presentation.screen.bookmark.BookmarkScreen
 import jp.developer.bbee.englishmemory.presentation.screen.bookmark.setting.BookmarkSettingScreen
 import jp.developer.bbee.englishmemory.presentation.screen.history.HistoryScreen
+import jp.developer.bbee.englishmemory.presentation.screen.score.ScoreScreen
 import jp.developer.bbee.englishmemory.presentation.screen.setting.SettingScreen
 import jp.developer.bbee.englishmemory.presentation.screen.study.StudyScreen
 import jp.developer.bbee.englishmemory.presentation.screen.top.TopScreen
@@ -29,6 +30,9 @@ fun StartApp() {
         }
         composable(ScreenRoute.HistoryScreen.route) {
             HistoryScreen(navController = navController)
+        }
+        composable(ScreenRoute.ScoreScreen.route) {
+            ScoreScreen(navController = navController)
         }
         composable(ScreenRoute.BookmarkScreen.route) {
             BookmarkScreen(navController = navController)

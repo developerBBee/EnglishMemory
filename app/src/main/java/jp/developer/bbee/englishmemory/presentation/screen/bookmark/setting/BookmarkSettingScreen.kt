@@ -38,6 +38,7 @@ import jp.developer.bbee.englishmemory.domain.model.Order
 import jp.developer.bbee.englishmemory.domain.model.SearchKey
 import jp.developer.bbee.englishmemory.domain.model.SortKey
 import jp.developer.bbee.englishmemory.presentation.components.modal.CustomScaffold
+import jp.developer.bbee.englishmemory.presentation.ui.theme.AppTheme
 
 @Composable
 fun BookmarkSettingScreen(
@@ -63,6 +64,12 @@ fun BookmarkSettingScreen(
         onClose = { if (!isLoading) viewModel.saveBookmarkPreferences() },
         drawerOpenEnabled = false
     ) {
+        if (isLoading) {
+            Box(modifier = Modifier.fillMaxSize()) {
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+            }
+        }
+
         BookmarkSettingContent(
             bookmarkSettingState = bookmarkSettingState,
             onSearchChanged = { w -> viewModel.updateSearchPreferences(word = w) },
@@ -79,17 +86,10 @@ fun BookmarkSettingContent(
     onCheckedChange: (FilterKey, Boolean) -> Unit,
     onToggleChange: (SortKey, Order) -> Unit,
 ) {
-    val isLoading = bookmarkSettingState.isLoading
     val prefs = bookmarkSettingState.preferences
     val searchWord = prefs?.searchWord ?: ""
     val checkedMap = prefs?.bookmarkBooleans ?: emptyMap()
     val sortPrefs = prefs?.sortPrefs ?: emptyMap()
-
-    if (isLoading) {
-        Box(modifier = Modifier.fillMaxSize()) {
-            CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
-        }
-    }
 
     if (prefs == null) {
         return
@@ -100,7 +100,7 @@ fun BookmarkSettingContent(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp),
+                    .padding(AppTheme.dimens.small),
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
@@ -129,7 +129,7 @@ fun BookmarkSettingContent(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp),
+                    .padding(AppTheme.dimens.small),
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
@@ -156,7 +156,7 @@ fun BookmarkSettingContent(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp),
+                    .padding(AppTheme.dimens.small),
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
@@ -201,7 +201,7 @@ fun BookmarkSettingContent(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(8.dp),
+                    .padding(AppTheme.dimens.small),
             ) {
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
@@ -236,7 +236,7 @@ fun TextAndCheckbox(
 ) {
     Row(
         modifier = Modifier
-            .clip(RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(AppTheme.dimens.small))
             .clickable { onCheckedChange(!checked) },
         verticalAlignment = Alignment.CenterVertically,
     ) {
@@ -275,7 +275,7 @@ fun TextAndToggleIcon(
 
     Row(
         modifier = Modifier
-            .clip(RoundedCornerShape(8.dp))
+            .clip(RoundedCornerShape(AppTheme.dimens.small))
             .clickable { onOrderChange(newOrder) },
         verticalAlignment = Alignment.CenterVertically,
     ) {
