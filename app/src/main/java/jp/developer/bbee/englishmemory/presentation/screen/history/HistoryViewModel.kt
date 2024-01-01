@@ -44,7 +44,7 @@ class HistoryViewModel @Inject constructor(
     private val _favoriteFlow = MutableStateFlow<Boolean?>(null)
 
     init {
-        // History from the last week
+        // History from the last week TODO:期間を指定できるようにする using date pickers
         getHistoryUseCase(LocalDateTime.now().minusDays(8).format(DATETIME_FORMATTER))
             .onEach {
                 _state.value = _state.value.copy(

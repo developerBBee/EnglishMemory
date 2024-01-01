@@ -26,10 +26,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
-import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
 import jp.developer.bbee.englishmemory.presentation.ScreenRoute
+import jp.developer.bbee.englishmemory.presentation.ui.theme.AppTheme
 import kotlinx.coroutines.launch
 
 @OptIn(ExperimentalMaterial3Api::class)
@@ -63,7 +63,7 @@ fun CustomScaffold(
         gesturesEnabled = drawerOpenEnabled,
         drawerContent = {
             ModalDrawerSheet {
-                Text("Drawer title", modifier = Modifier.padding(16.dp))
+                Text("Contents", modifier = Modifier.padding(AppTheme.dimens.medium))
                 Divider()
                 NavigationDrawerItem(
                     label = { Text(text = "Top") },
@@ -88,21 +88,46 @@ fun CustomScaffold(
                     }
                 )
                 NavigationDrawerItem(
-                    label = { Text(text = "Settings") },
+                    label = { Text(text = "History") },
                     selected = false,
                     onClick = {
-                        navController.navigate(ScreenRoute.SettingScreen.route) {
+                        navController.navigate(ScreenRoute.HistoryScreen.route) {
                             launchSingleTop = true
                             scope.launch { drawerState.close() }
                         }
                     }
                 )
                 NavigationDrawerItem(
-                    label = { Text(text = "Drawer Item") },
+                    label = { Text(text = "Score") },
                     selected = false,
-                    onClick = { /*TODO*/ }
+                    onClick = {
+                        navController.navigate(ScreenRoute.ScoreScreen.route) {
+                            launchSingleTop = true
+                            scope.launch { drawerState.close() }
+                        }
+                    }
                 )
-                // ...other drawer items
+                NavigationDrawerItem(
+                    label = { Text(text = "Bookmark") },
+                    selected = false,
+                    onClick = {
+                        navController.navigate(ScreenRoute.BookmarkScreen.route) {
+                            launchSingleTop = true
+                            scope.launch { drawerState.close() }
+                        }
+                    }
+                )
+                // TODO SettingScreen完成後に有効にする
+//                NavigationDrawerItem(
+//                    label = { Text(text = "Settings") },
+//                    selected = false,
+//                    onClick = {
+//                        navController.navigate(ScreenRoute.SettingScreen.route) {
+//                            launchSingleTop = true
+//                            scope.launch { drawerState.close() }
+//                        }
+//                    }
+//                )
             }
         }
     ) {

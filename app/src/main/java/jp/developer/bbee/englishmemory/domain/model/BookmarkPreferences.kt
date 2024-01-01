@@ -38,6 +38,13 @@ enum class FilterKey(val displayName: String, val type: FilterKeyType) {
     WORD_TYPE_PREPOSITION("前置詞", FilterKeyType.WORD_TYPE),
     WORD_TYPE_INTERJECTION("間投詞", FilterKeyType.WORD_TYPE),
     WORD_TYPE_CONJUNCTION("接続詞", FilterKeyType.WORD_TYPE),
+    ;
+
+    companion object {
+        fun fromDisplayName(displayName: String): FilterKey? {
+            return entries.find { it.displayName == displayName }
+        }
+    }
 }
 
 enum class FilterKeyType {

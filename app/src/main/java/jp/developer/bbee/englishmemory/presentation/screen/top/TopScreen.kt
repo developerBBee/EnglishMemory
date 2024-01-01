@@ -74,7 +74,7 @@ fun TopContent(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(0.7f)
+                        .weight(3f)
                         .background(Color.Yellow),
                     horizontalArrangement = Arrangement.Center,
                 ) {
@@ -89,46 +89,26 @@ fun TopContent(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .weight(0.3f),
+                        .weight(2f),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center,
                 ) {
-                    TextButton(
-                        enabled = viewModel.isReady,
-                        onClick = { navController.navigate(ScreenRoute.StudyScreen.route) }
-                    ) {
-                        Text(
-                            text = "Start",
-                            style = MaterialTheme.typography.headlineLarge,
-                        )
+                    MenuTextButton(text = "Start", enabled = viewModel.isReady) {
+                        navController.navigate(ScreenRoute.StudyScreen.route)
                     }
-                    TextButton(
-                        enabled = viewModel.isReady,
-                        onClick = { navController.navigate(ScreenRoute.HistoryScreen.route) }
-                    ) {
-                        Text(
-                            text = "History",
-                            style = MaterialTheme.typography.headlineLarge,
-                        )
+                    MenuTextButton(text = "History", enabled = viewModel.isReady) {
+                        navController.navigate(ScreenRoute.HistoryScreen.route)
                     }
-                    TextButton(
-                        enabled = viewModel.isReady,
-                        onClick = { navController.navigate(ScreenRoute.BookmarkScreen.route) }
-                    ) {
-                        Text(
-                            text = "Bookmark",
-                            style = MaterialTheme.typography.headlineLarge,
-                        )
+                    MenuTextButton(text = "Score", enabled = viewModel.isReady) {
+                        navController.navigate(ScreenRoute.ScoreScreen.route)
                     }
-                    TextButton(
-                        enabled = viewModel.isReady,
-                        onClick = { /*TODO*/ }
-                    ) {
-                        Text(
-                            text = "Setting",
-                            style = MaterialTheme.typography.headlineLarge,
-                        )
+                    MenuTextButton(text = "Bookmark", enabled = viewModel.isReady) {
+                        navController.navigate(ScreenRoute.BookmarkScreen.route)
                     }
+                    // TODO SettingScreen完成後に有効にする
+//                    MenuTextButton(text = "Setting", enabled = viewModel.isReady) {
+//                        navController.navigate(ScreenRoute.SettingScreen.route)
+//                    }
                 }
             }
             if (viewModel.isRestart) {
@@ -154,6 +134,23 @@ fun TopContent(
                 }
             }
         }
+    }
+}
+
+@Composable
+fun MenuTextButton(
+    text: String,
+    enabled: Boolean,
+    onClick: () -> Unit,
+) {
+    TextButton(
+        onClick = onClick,
+        enabled = enabled,
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.headlineLarge,
+        )
     }
 }
 

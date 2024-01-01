@@ -10,9 +10,9 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import jp.developer.bbee.englishmemory.domain.model.StudyData
 import jp.developer.bbee.englishmemory.presentation.components.icon.BookmarkOrNotIcon
+import jp.developer.bbee.englishmemory.presentation.ui.theme.AppTheme
 
 @Composable
 fun StudyDataDialog(
@@ -38,12 +38,12 @@ fun StudyDataDialog(
                     Text(
                         text = "${studyData.english}  [${studyData.wordType}]",
                         style = MaterialTheme.typography.titleLarge,
-                        modifier = Modifier.padding(16.dp)
+                        modifier = Modifier.padding(AppTheme.dimens.medium)
                     )
                 }
                 Text(
                     text = studyData.translateToJapanese,
-                    modifier = Modifier.padding(16.dp)
+                    modifier = Modifier.padding(AppTheme.dimens.medium)
                 )
             }
         }
