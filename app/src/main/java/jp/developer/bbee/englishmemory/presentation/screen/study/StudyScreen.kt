@@ -25,6 +25,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
 import jp.developer.bbee.englishmemory.R
 import jp.developer.bbee.englishmemory.presentation.ScreenRoute.TopScreen
+import jp.developer.bbee.englishmemory.presentation.components.icon.BookmarkOrNotIcon
 import jp.developer.bbee.englishmemory.presentation.components.modal.CustomScaffold
 import jp.developer.bbee.englishmemory.presentation.ui.theme.AppTheme
 
@@ -121,6 +122,20 @@ fun StudyContent(
                             Text(
                                 text = stringResource(id = R.string.study_weblio),
                                 style = MaterialTheme.typography.titleSmall,
+                            )
+                        }
+                        Spacer(modifier = Modifier.padding(AppTheme.dimens.small))
+                        Row(
+                            verticalAlignment = Alignment.CenterVertically,
+                            horizontalArrangement = Arrangement.Center,
+                        ) {
+                            Text(
+                                text = stringResource(id = R.string.study_bookmark),
+                                style = MaterialTheme.typography.titleMedium,
+                            )
+                            BookmarkOrNotIcon(
+                                isBookmarked = question.isFavorite,
+                                onClickBookmark = { viewModel.updateBookmarkStudyStatus(it) }
                             )
                         }
                     }

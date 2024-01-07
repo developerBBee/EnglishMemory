@@ -3,6 +3,7 @@ package jp.developer.bbee.englishmemory.presentation.screen.history
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
@@ -37,6 +38,7 @@ import jp.developer.bbee.englishmemory.presentation.ScreenRoute
 import jp.developer.bbee.englishmemory.presentation.components.dialog.StudyDataDialog
 import jp.developer.bbee.englishmemory.presentation.components.modal.CustomScaffold
 import jp.developer.bbee.englishmemory.presentation.ui.theme.AppTheme
+import jp.developer.bbee.englishmemory.presentation.ui.theme.ForestGreen
 
 @Composable
 fun HistoryScreen(
@@ -151,11 +153,12 @@ fun HistoryContent(
 fun CorrectOrNotIcon(
     isCorrect: Boolean
 ) {
+    val isDark = isSystemInDarkTheme()
     if (isCorrect) {
         Icon(
             imageVector = Icons.Default.Done,
             contentDescription = stringResource(id = R.string.history_correct),
-            tint = Color.Green
+            tint = if (isDark) Color.Green else ForestGreen
         )
     } else {
         Icon(

@@ -1,5 +1,6 @@
 package jp.developer.bbee.englishmemory.presentation.components.icon
 
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Star
@@ -20,24 +21,34 @@ fun BookmarkOrNotIcon(
     iconSize: Int = 36,
     onClickBookmark: (Boolean) -> Unit,
 ) {
-    val icon = if (isBookmarked) {
-        rememberVectorPainter(Icons.Filled.Star)
-    } else {
-        painterResource(id = R.drawable.ic_outline_star_24)
-    }
+//    val icon = if (isBookmarked) {
+//        rememberVectorPainter(Icons.Filled.Star)
+//    } else {
+//        painterResource(id = R.drawable.ic_outline_star_24)
+//    }
+    val icon = rememberVectorPainter(Icons.Filled.Star)
+    val outlineIcon = painterResource(id = R.drawable.ic_outline_star_24)
 
     val iconColor = if (isBookmarked) {
         Color.Yellow
     } else {
-        Color.Gray
+        Color.Transparent
     }
 
     IconButton(onClick = { onClickBookmark(!isBookmarked) }) {
-        Icon(
-            painter = icon,
-            contentDescription = stringResource(id = R.string.icon_bookmark),
-            tint = iconColor,
-            modifier = Modifier.size(iconSize.dp)
-        )
+        Box {
+            Icon(
+                painter = icon,
+                contentDescription = stringResource(id = R.string.icon_bookmark),
+                tint = iconColor,
+                modifier = Modifier.size(iconSize.dp)
+            )
+            Icon(
+                painter = outlineIcon,
+                contentDescription = stringResource(id = R.string.icon_bookmark),
+                tint = Color.Gray,
+                modifier = Modifier.size(iconSize.dp)
+            )
+        }
     }
 }
