@@ -2,10 +2,13 @@ package jp.developer.bbee.englishmemory.presentation.screen.top
 
 import com.google.common.truth.Truth.assertThat
 import jp.developer.bbee.englishmemory.domain.model.TranslateData
+import jp.developer.bbee.englishmemory.domain.usecase.GetSavedLastDateUseCase
 import jp.developer.bbee.englishmemory.domain.usecase.GetTranslateDataFromDbUseCase
 import jp.developer.bbee.englishmemory.domain.usecase.GetTranslateDataUseCase
 import jp.developer.bbee.englishmemory.domain.usecase.SaveTranslateDataUseCase
+import jp.developer.bbee.englishmemory.domain.usecase.SetSavedLastDateUseCase
 import jp.developer.bbee.englishmemory.testdouble.FakeAccountService
+import jp.developer.bbee.englishmemory.testdouble.FakePreferenceRepository
 import jp.developer.bbee.englishmemory.testdouble.FakeTranslateRepository
 import jp.developer.bbee.englishmemory.testdouble.MainCoroutineRule
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -21,9 +24,12 @@ class TopViewModelTest {
     private lateinit var topViewModel: TopViewModel
     private lateinit var fakeService: FakeAccountService
     private lateinit var fakeRepository: FakeTranslateRepository
+    private lateinit var fakePreference: FakePreferenceRepository
     private lateinit var getTranslateDataUseCase: GetTranslateDataUseCase
     private lateinit var getTranslateDataFromDbUseCase: GetTranslateDataFromDbUseCase
     private lateinit var saveTranslateDataUseCase: SaveTranslateDataUseCase
+    private lateinit var setSavedLastDateUseCase: SetSavedLastDateUseCase
+    private lateinit var getSavedLastDateUseCase: GetSavedLastDateUseCase
 
     @get:Rule
     val mainCoroutineRule = MainCoroutineRule()
@@ -32,11 +38,14 @@ class TopViewModelTest {
     fun setUp() {
         fakeService = FakeAccountService()
         fakeRepository = FakeTranslateRepository()
+        fakePreference = FakePreferenceRepository()
 
         val dispatcher = mainCoroutineRule.testDispatcher
         getTranslateDataUseCase = GetTranslateDataUseCase(dispatcher, fakeRepository)
         getTranslateDataFromDbUseCase = GetTranslateDataFromDbUseCase(dispatcher, fakeRepository)
         saveTranslateDataUseCase = SaveTranslateDataUseCase(dispatcher, fakeRepository)
+        setSavedLastDateUseCase = SetSavedLastDateUseCase(dispatcher, fakePreference)
+        getSavedLastDateUseCase = GetSavedLastDateUseCase(fakePreference)
     }
 
     private val testData = listOf(
@@ -69,7 +78,9 @@ class TopViewModelTest {
             getTranslateDataUseCase,
             saveTranslateDataUseCase,
             getTranslateDataFromDbUseCase,
-            fakeService
+            setSavedLastDateUseCase,
+            getSavedLastDateUseCase,
+            fakeService,
         )
 
         advanceTimeBy(100)
@@ -168,6 +179,8 @@ class TopViewModelTest {
             getTranslateDataUseCase,
             saveTranslateDataUseCase,
             getTranslateDataFromDbUseCase,
+            setSavedLastDateUseCase,
+            getSavedLastDateUseCase,
             fakeService
         )
 
@@ -227,6 +240,8 @@ class TopViewModelTest {
             getTranslateDataUseCase,
             saveTranslateDataUseCase,
             getTranslateDataFromDbUseCase,
+            setSavedLastDateUseCase,
+            getSavedLastDateUseCase,
             fakeService
         )
 
@@ -276,6 +291,8 @@ class TopViewModelTest {
             getTranslateDataUseCase,
             saveTranslateDataUseCase,
             getTranslateDataFromDbUseCase,
+            setSavedLastDateUseCase,
+            getSavedLastDateUseCase,
             fakeService
         )
 
@@ -336,6 +353,8 @@ class TopViewModelTest {
             getTranslateDataUseCase,
             saveTranslateDataUseCase,
             getTranslateDataFromDbUseCase,
+            setSavedLastDateUseCase,
+            getSavedLastDateUseCase,
             fakeService
         )
 
@@ -404,6 +423,8 @@ class TopViewModelTest {
             getTranslateDataUseCase,
             saveTranslateDataUseCase,
             getTranslateDataFromDbUseCase,
+            setSavedLastDateUseCase,
+            getSavedLastDateUseCase,
             fakeService
         )
 

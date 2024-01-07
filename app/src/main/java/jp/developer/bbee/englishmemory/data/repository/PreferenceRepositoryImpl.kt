@@ -5,11 +5,18 @@ import jp.developer.bbee.englishmemory.domain.model.BookmarkPreferences
 import jp.developer.bbee.englishmemory.domain.model.SettingPreferences
 import jp.developer.bbee.englishmemory.domain.repository.PreferenceRepository
 import kotlinx.coroutines.flow.Flow
+import java.time.LocalDateTime
 import javax.inject.Inject
 
 class PreferenceRepositoryImpl @Inject constructor(
     private val store: PreferenceStore
 ) : PreferenceRepository {
+    override fun getSavedLastDateFlow(): Flow<LocalDateTime?> =
+        store.getSavedLastDateFlow()
+
+    override suspend fun setSavedLastDate(date: LocalDateTime) {
+        store.setSavedLastDate(date)
+    }
 
     override fun getPreferencesFlow(): Flow<Map<SettingPreferences, Boolean>> =
         store.getPreferencesFlow()

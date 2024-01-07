@@ -13,6 +13,7 @@ import jp.developer.bbee.englishmemory.domain.model.SettingPreferences
 import jp.developer.bbee.englishmemory.domain.model.SortKey
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
+import java.time.LocalDateTime
 import javax.inject.Inject
 import javax.inject.Singleton
 
@@ -20,6 +21,19 @@ import javax.inject.Singleton
 class PreferenceStore @Inject constructor(
     private val preferencesDataStore: DataStore<Preferences>
 ) {
+    fun getSavedLastDateFlow(): Flow<LocalDateTime?> = preferencesDataStore.data
+        .map { preferences ->
+            runCatching {
+                val dateString = preferences[stringPreferencesKey(SAVED_LAST_DATE_NAME)]
+                dateString?.let { LocalDateTime.parse(it) }
+            }.getOrNull()
+        }
+
+    suspend fun setSavedLastDate(date: LocalDateTime) {
+        preferencesDataStore.edit { preferences ->
+            preferences[stringPreferencesKey(SAVED_LAST_DATE_NAME)] = date.toString()
+        }
+    }
 
     fun getPreferencesFlow(): Flow<Map<SettingPreferences, Boolean>> = preferencesDataStore.data
         .map { preferences ->
@@ -59,5 +73,9 @@ class PreferenceStore @Inject constructor(
                 preferences[stringPreferencesKey(key.name)] = order
             }
         }
+    }
+
+    companion object {
+        private const val SAVED_LAST_DATE_NAME = "SavedLastDate"
     }
 }
