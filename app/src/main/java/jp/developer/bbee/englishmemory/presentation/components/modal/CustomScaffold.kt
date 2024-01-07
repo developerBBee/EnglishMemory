@@ -26,8 +26,10 @@ import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.res.stringResource
 import androidx.navigation.NavController
 import com.google.accompanist.systemuicontroller.rememberSystemUiController
+import jp.developer.bbee.englishmemory.R
 import jp.developer.bbee.englishmemory.presentation.ScreenRoute
 import jp.developer.bbee.englishmemory.presentation.ui.theme.AppTheme
 import kotlinx.coroutines.launch
@@ -63,10 +65,13 @@ fun CustomScaffold(
         gesturesEnabled = drawerOpenEnabled,
         drawerContent = {
             ModalDrawerSheet {
-                Text("Contents", modifier = Modifier.padding(AppTheme.dimens.medium))
+                Text(
+                    text = stringResource(id = R.string.modal_drawer_title),
+                    modifier = Modifier.padding(AppTheme.dimens.medium)
+                )
                 Divider()
                 NavigationDrawerItem(
-                    label = { Text(text = "Top") },
+                    label = { Text(text = stringResource(id = R.string.top_title)) },
                     selected = false,
                     onClick = {
                         navController.navigate(ScreenRoute.TopScreen.route) {
@@ -78,7 +83,7 @@ fun CustomScaffold(
                     }
                 )
                 NavigationDrawerItem(
-                    label = { Text(text = "Study Mode") },
+                    label = { Text(text = stringResource(id = R.string.study_title)) },
                     selected = false,
                     onClick = {
                         navController.navigate(ScreenRoute.StudyScreen.route) {
@@ -88,7 +93,7 @@ fun CustomScaffold(
                     }
                 )
                 NavigationDrawerItem(
-                    label = { Text(text = "History") },
+                    label = { Text(text = stringResource(id = R.string.history_title)) },
                     selected = false,
                     onClick = {
                         navController.navigate(ScreenRoute.HistoryScreen.route) {
@@ -98,7 +103,7 @@ fun CustomScaffold(
                     }
                 )
                 NavigationDrawerItem(
-                    label = { Text(text = "Score") },
+                    label = { Text(text = stringResource(id = R.string.score_title)) },
                     selected = false,
                     onClick = {
                         navController.navigate(ScreenRoute.ScoreScreen.route) {
@@ -108,7 +113,7 @@ fun CustomScaffold(
                     }
                 )
                 NavigationDrawerItem(
-                    label = { Text(text = "Bookmark") },
+                    label = { Text(text = stringResource(id = R.string.bookmark_title)) },
                     selected = false,
                     onClick = {
                         navController.navigate(ScreenRoute.BookmarkScreen.route) {
@@ -143,7 +148,7 @@ fun CustomScaffold(
                             IconButton(onClick = onClose) {
                                 Icon(
                                     imageVector = Icons.Filled.Close,
-                                    contentDescription = "閉じる"
+                                    contentDescription = stringResource(id = R.string.common_close)
                                 )
                             }
                         } else {
@@ -159,7 +164,7 @@ fun CustomScaffold(
                             }) {
                                 Icon(
                                     imageVector = Icons.Filled.Menu,
-                                    contentDescription = "メニュードロワー"
+                                    contentDescription = stringResource(id = R.string.modal_drawer)
                                 )
                             }
                         }

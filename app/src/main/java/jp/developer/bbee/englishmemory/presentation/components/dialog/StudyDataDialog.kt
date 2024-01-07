@@ -10,6 +10,8 @@ import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import jp.developer.bbee.englishmemory.R
 import jp.developer.bbee.englishmemory.domain.model.StudyData
 import jp.developer.bbee.englishmemory.presentation.components.icon.BookmarkOrNotIcon
 import jp.developer.bbee.englishmemory.presentation.ui.theme.AppTheme
@@ -24,27 +26,29 @@ fun StudyDataDialog(
         onDismissRequest = onDismiss,
         confirmButton = {
             TextButton(onClick = onDismiss) {
-                Text(text = "閉じる")
+                Text(text = stringResource(id = R.string.common_close))
             }
         },
         text = {
             Column {
-                Row(
-                    verticalAlignment = Alignment.CenterVertically,
-                ) {
-                    BookmarkOrNotIcon(isBookmarked = studyData.isFavorite) {
-                        onClickBookmark(it)
+                studyData.apply {
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        BookmarkOrNotIcon(isBookmarked = isFavorite) {
+                            onClickBookmark(it)
+                        }
+                        Text(
+                            text = stringResource(id = R.string.dialog_word, english, wordType),
+                            style = MaterialTheme.typography.titleLarge,
+                            modifier = Modifier.padding(AppTheme.dimens.medium)
+                        )
                     }
                     Text(
-                        text = "${studyData.english}  [${studyData.wordType}]",
-                        style = MaterialTheme.typography.titleLarge,
+                        text = translateToJapanese,
                         modifier = Modifier.padding(AppTheme.dimens.medium)
                     )
                 }
-                Text(
-                    text = studyData.translateToJapanese,
-                    modifier = Modifier.padding(AppTheme.dimens.medium)
-                )
             }
         }
     )

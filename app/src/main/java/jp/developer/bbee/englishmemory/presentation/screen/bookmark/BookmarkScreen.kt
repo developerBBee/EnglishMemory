@@ -20,16 +20,17 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import jp.developer.bbee.englishmemory.R
 import jp.developer.bbee.englishmemory.domain.model.StudyData
 import jp.developer.bbee.englishmemory.presentation.ScreenRoute
 import jp.developer.bbee.englishmemory.presentation.components.dialog.StudyDataDialog
 import jp.developer.bbee.englishmemory.presentation.components.modal.CustomScaffold
 import jp.developer.bbee.englishmemory.presentation.ui.theme.AppTheme
-import kotlin.math.round
 
 @Composable
 fun BookmarkScreen(
@@ -43,7 +44,7 @@ fun BookmarkScreen(
 
     val drawerOpenEnabled = !isLoading && error.isNullOrBlank()
 
-    val title = "Bookmark"
+    val title = stringResource(id = R.string.bookmark_title)
     CustomScaffold(
         title = title,
         navController = navController,
@@ -97,7 +98,7 @@ fun BookmarkContent(
                     }) {
                         Icon(
                             imageVector = Icons.Filled.Search,
-                            contentDescription = "検索、フィルター、ソート",
+                            contentDescription = stringResource(id = R.string.bookmark_search),
                         )
                     }
                 }
@@ -115,7 +116,7 @@ fun BookmarkContent(
                     Text(
                         modifier = Modifier.weight(2f),
                         style = MaterialTheme.typography.titleLarge,
-                        text = "[${it.wordType}] ${it.english}",
+                        text = stringResource(id = R.string.bookmark_word, it.wordType, it.english),
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
@@ -126,11 +127,11 @@ fun BookmarkContent(
                     ) {
                         Text(
                             style = MaterialTheme.typography.titleMedium,
-                            text = "正答率"
+                            text = stringResource(id = R.string.bookmark_rate)
                         )
                         Text(
                             style = MaterialTheme.typography.titleLarge,
-                            text = "${round(it.scoreRate * 1000) / 10}%"
+                            text = stringResource(id = R.string.bookmark_percent, it.scoreRate * 100)
                         )
                     }
                 }

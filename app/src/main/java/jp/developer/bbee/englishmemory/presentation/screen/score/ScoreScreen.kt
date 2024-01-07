@@ -23,9 +23,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import jp.developer.bbee.englishmemory.R
 import jp.developer.bbee.englishmemory.presentation.components.modal.CustomScaffold
 import jp.developer.bbee.englishmemory.presentation.ui.theme.AppTheme
 import kotlinx.coroutines.launch
@@ -41,8 +43,9 @@ fun ScoreScreen(
 
     val drawerOpenEnabled = !isLoading && error.isNullOrBlank()
 
+    val title = stringResource(id = R.string.score_title)
     CustomScaffold(
-        title = "Your score",
+        title = title,
         navController = navController,
         drawerOpenEnabled = drawerOpenEnabled
     ) {
@@ -67,7 +70,10 @@ fun ScoreContent(
     val scoresList = listOf(scoreState.scores, scoreState.scoresOneWeek)
 
     // pager params
-    val titles = listOf("全期間", "直近１週間")
+    val titles = listOf(
+        stringResource(id = R.string.score_tab_whole),
+        stringResource(id = R.string.score_tab_week),
+    )
     val pagerState = rememberPagerState { titles.size }
     val coroutineScope = rememberCoroutineScope()
 
@@ -97,7 +103,10 @@ fun ScoreContent(
 
             Column(modifier = Modifier.fillMaxSize()) {
                 val scoreTotal = scores.values.reduce { acc, score -> acc + score }
-                ScoreDetail(wordType = "全体", score = scoreTotal)
+                ScoreDetail(
+                    wordType = stringResource(id = R.string.score_all_word_type),
+                    score = scoreTotal
+                )
 
                 Divider()
 
@@ -143,7 +152,7 @@ fun ScoreDetail(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = "出題回数：",
+                text = stringResource(id = R.string.score_number_of_questions),
                 style = MaterialTheme.typography.titleMedium
             )
             Text(
@@ -159,11 +168,11 @@ fun ScoreDetail(
                 verticalAlignment = Alignment.CenterVertically,
             ) {
                 Text(
-                    text = "正解率：",
+                    text = stringResource(id = R.string.score_correct_answer_rate),
                     style = MaterialTheme.typography.titleMedium
                 )
                 Text(
-                    text = "%3.1f".format(correctRate) + "%",
+                    text = stringResource(id = R.string.score_percent, correctRate),
                     style = MaterialTheme.typography.titleMedium
                 )
             }
