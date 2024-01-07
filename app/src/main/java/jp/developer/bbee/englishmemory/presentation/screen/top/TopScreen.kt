@@ -5,8 +5,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.CircularProgressIndicator
@@ -21,6 +23,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
@@ -88,9 +91,14 @@ fun TopContent(
                 val score = stringResource(id = R.string.top_score)
                 val bookmark = stringResource(id = R.string.top_bookmark)
 
-                MenuTextButton(text = study, enabled = viewModel.isReady) {
+                MenuTextButton(
+                    text = study,
+                    style = MaterialTheme.typography.headlineLarge,
+                    enabled = viewModel.isReady
+                ) {
                     navController.navigate(ScreenRoute.StudyScreen.route)
                 }
+                Spacer(modifier = Modifier.padding(AppTheme.dimens.small))
                 MenuTextButton(text = history, enabled = viewModel.isReady) {
                     navController.navigate(ScreenRoute.HistoryScreen.route)
                 }
@@ -134,6 +142,7 @@ fun TopContent(
 @Composable
 fun MenuTextButton(
     text: String,
+    style: TextStyle = MaterialTheme.typography.headlineSmall,
     enabled: Boolean,
     onClick: () -> Unit,
 ) {
@@ -143,7 +152,7 @@ fun MenuTextButton(
     ) {
         Text(
             text = text,
-            style = MaterialTheme.typography.headlineLarge,
+            style = style,
         )
     }
 }

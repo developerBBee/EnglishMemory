@@ -126,7 +126,7 @@ fun NoDataPage() {
         modifier = Modifier.fillMaxSize(),
         contentAlignment = Alignment.Center
     ) {
-        Text(text = "No data ...")
+        Text(text = stringResource(id = R.string.score_no_data))
     }
 }
 
