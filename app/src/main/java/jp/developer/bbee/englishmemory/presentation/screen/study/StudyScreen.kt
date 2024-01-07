@@ -15,14 +15,15 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalUriHandler
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import jp.developer.bbee.englishmemory.R
 import jp.developer.bbee.englishmemory.presentation.ScreenRoute.TopScreen
 import jp.developer.bbee.englishmemory.presentation.components.modal.CustomScaffold
 import jp.developer.bbee.englishmemory.presentation.ui.theme.AppTheme
@@ -35,7 +36,7 @@ fun StudyScreen(
     val state by viewModel.state.collectAsStateWithLifecycle()
     val drawerOpenEnabled = !state.isLoading && state.error.isNullOrBlank()
 
-    val title = "Study Mode"
+    val title = stringResource(id = R.string.study_title)
     CustomScaffold(
         title = title,
         navController = navController,
@@ -57,7 +58,6 @@ fun StudyContent(
 ) {
     val error = state.error
     val question = state.questionData
-    val recent by viewModel.recent.collectAsState(initial = emptyList())
 
     val isShowCorrect = viewModel.isShowCorrect
     val uriHandler = LocalUriHandler.current
@@ -69,7 +69,7 @@ fun StudyContent(
                 .align(Alignment.Center))
         } else if (error != null || question == null) {
             AlertDialog(
-                text = { Text(text = error?: "出題する問題がありません") },
+                text = { Text(text = error?: stringResource(id = R.string.study_no_question)) },
                 onDismissRequest = { navController.navigate(TopScreen.route) },
                 confirmButton = { navController.navigate(TopScreen.route) }
             )
@@ -77,15 +77,6 @@ fun StudyContent(
             Column(
                 modifier = Modifier.fillMaxSize()
             ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .weight(0.1f),
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                ) {
-                    Text(text = if(recent.isEmpty()) "" else recent.get(0).english)
-                }
                 /* 出題英単語 */
                 Column(
                     modifier = Modifier
@@ -105,7 +96,7 @@ fun StudyContent(
                         )
                         Spacer(modifier = Modifier.padding(AppTheme.dimens.small))
                         Text(
-                            text = "[${question.wordType}]",
+                            text = stringResource(id = R.string.study_word_type, question.wordType),
                             style = MaterialTheme.typography.displaySmall
                         )
                     }
@@ -125,11 +116,10 @@ fun StudyContent(
                             style = MaterialTheme.typography.titleLarge,
                         )
                         Spacer(modifier = Modifier.padding(AppTheme.dimens.small))
-                        TextButton(onClick = {
-                            uriHandler.openUri("https://ejje.weblio.jp/content/${question.english}")
-                        }) {
+                        val url = stringResource(id = R.string.study_weblio_url, question.english)
+                        TextButton(onClick = { uriHandler.openUri(uri = url) }) {
                             Text(
-                                text = "Weblioでこの単語を調べる",
+                                text = stringResource(id = R.string.study_weblio),
                                 style = MaterialTheme.typography.titleSmall,
                             )
                         }
@@ -147,27 +137,27 @@ fun StudyContent(
                     if (!isShowCorrect) {
                         Button(onClick = { viewModel.isShowCorrect = true }) {
                             Text(
-                                text = "正解を表示する",
+                                text = stringResource(id = R.string.study_show_answer),
                                 style = MaterialTheme.typography.titleLarge,
                             )
                         }
                     } else {
                         Text(
-                            text = "自己採点",
+                            text = stringResource(id = R.string.study_self_grading),
                             style = MaterialTheme.typography.headlineMedium,
                         )
                         Spacer(modifier = Modifier.padding(AppTheme.dimens.small))
                         Row {
                             Button(onClick = { viewModel.updateStudyStatus(true) }) {
                                 Text(
-                                    text = "正解",
+                                    text = stringResource(id = R.string.study_correct),
                                     style = MaterialTheme.typography.titleLarge,
                                 )
                             }
                             Spacer(modifier = Modifier.padding(AppTheme.dimens.small))
                             Button(onClick = { viewModel.updateStudyStatus(false) }) {
                                 Text(
-                                    text = "不正解",
+                                    text = stringResource(id = R.string.study_incorrect),
                                     style = MaterialTheme.typography.titleLarge,
                                 )
                             }

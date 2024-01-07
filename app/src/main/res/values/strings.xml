@@ -1,3 +1,58 @@
 <resources>
-    <string name="app_name">EnglishMemory</string>
+    <string name="app_name">えいたんGo!</string>
+
+    <string name="common_close">閉じる</string>
+
+    <string name="top_title">英単語学習トップ</string>
+    <string name="study_title">学習モード</string>
+    <string name="history_title">学習の履歴</string>
+    <string name="score_title">学習の統計</string>
+    <string name="bookmark_title">お気に入り単語</string>
+    <string name="bookmark_setting_title">検索、フィルター、ソート</string>
+
+    <string name="top_study">学習開始</string>
+    <string name="top_history">学習の履歴</string>
+    <string name="top_score">学習の統計</string>
+    <string name="top_bookmark">お気に入り単語</string>
+    <string name="top_main_logo">メインロゴ</string>
+    <string name="top_restart">再起動</string>
+
+    <string name="study_no_question">出題する問題がありません</string>
+    <string name="study_word_type">[%s]</string>
+    <string name="study_weblio">"Weblioでこの単語を調べる",</string>
+    <string name="study_weblio_url">"https://ejje.weblio.jp/content/%s"</string>
+    <string name="study_show_answer">正解を表示する</string>
+    <string name="study_self_grading">自己採点</string>
+    <string name="study_correct">正解</string>
+    <string name="study_incorrect">不正解</string>
+
+    <string name="history_back_to_top">トップに戻る</string>
+    <string name="history_word">%1$s [%2$s]</string>
+    <string name="history_correct">正解</string>
+    <string name="history_incorrect">不正解</string>
+
+    <string name="score_tab_whole">全期間</string>
+    <string name="score_tab_week">直近１週間</string>
+    <string name="score_all_word_type">全体</string>
+    <string name="score_number_of_questions">出題回数：</string>
+    <string name="score_correct_answer_rate">正答率：</string>
+    <string name="score_percent">%3.1f%%</string>
+
+    <string name="bookmark_word">[%1$s] %2$s</string>
+    <string name="bookmark_rate">正答率</string>
+    <string name="bookmark_percent">%3.1f%%</string>
+    <string name="bookmark_search">検索</string>
+    <string name="bookmark_filter">フィルター</string>
+    <string name="bookmark_sort">ソート</string>
+    <string name="bookmark_importance">重要単語ランク</string>
+    <string name="bookmark_word_type">品詞</string>
+    <string name="bookmark_order">並び替え</string>
+    <string name="bookmark_no_order">順不同</string>
+    <string name="bookmark_ascending_order">昇順</string>
+    <string name="bookmark_descending_order">降順</string>
+
+    <string name="modal_drawer_title">コンテンツ</string>
+    <string name="modal_drawer">ドロワー</string>
+    <string name="dialog_word">%1$s [%2$s]</string>
+    <string name="icon_bookmark">ブックマーク</string>
 </resources>

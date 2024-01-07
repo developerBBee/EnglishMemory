@@ -10,6 +10,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.vector.rememberVectorPainter
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import jp.developer.bbee.englishmemory.R
 
@@ -34,7 +35,7 @@ fun BookmarkOrNotIcon(
     IconButton(onClick = { onClickBookmark(!isBookmarked) }) {
         Icon(
             painter = icon,
-            contentDescription = "ブックマーク",
+            contentDescription = stringResource(id = R.string.icon_bookmark),
             tint = iconColor,
             modifier = Modifier.size(iconSize.dp)
         )

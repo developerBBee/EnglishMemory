@@ -25,9 +25,11 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.stringResource
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation.NavController
+import jp.developer.bbee.englishmemory.R
 import jp.developer.bbee.englishmemory.common.constant.DATE_JP_FORMATTER
 import jp.developer.bbee.englishmemory.common.constant.TIME_JP_FORMATTER
 import jp.developer.bbee.englishmemory.domain.model.History
@@ -44,7 +46,7 @@ fun HistoryScreen(
     val historyState by viewModel.state.collectAsStateWithLifecycle()
 
     val drawerOpenEnabled = !historyState.isLoading && historyState.error.isNullOrBlank()
-    val title = "History"
+    val title = stringResource(id = R.string.history_title)
     CustomScaffold(
         title = title,
         navController = navController,
@@ -110,15 +112,17 @@ fun HistoryContent(
                         horizontalArrangement = Arrangement.SpaceBetween,
                         verticalAlignment = Alignment.CenterVertically,
                     ) {
-                        Text(
-                            text = history.studyDate.format(TIME_JP_FORMATTER),
-                            style = MaterialTheme.typography.bodyLarge,
-                        )
-                        Text(
-                            text = "${history.english}  [${history.wordType}]",
-                            style = MaterialTheme.typography.titleLarge,
-                        )
-                        CorrectOrNotIcon(isCorrect = history.correct)
+                        history.apply {
+                            Text(
+                                text = studyDate.format(TIME_JP_FORMATTER),
+                                style = MaterialTheme.typography.bodyLarge,
+                            )
+                            Text(
+                                text = stringResource(id = R.string.history_word, english, wordType),
+                                style = MaterialTheme.typography.titleLarge,
+                            )
+                            CorrectOrNotIcon(isCorrect = correct)
+                        }
                     }
                 }
             }
@@ -130,7 +134,7 @@ fun HistoryContent(
                 confirmButton = {
                     TextButton(
                         onClick = { navController.navigate(ScreenRoute.TopScreen.route) }) {
-                        Text(text = "トップに戻る")
+                        Text(text = stringResource(id = R.string.history_back_to_top))
                     }
                 },
                 text = { Text(text = historyState.error) }
@@ -150,13 +154,13 @@ fun CorrectOrNotIcon(
     if (isCorrect) {
         Icon(
             imageVector = Icons.Default.Done,
-            contentDescription = "正解",
+            contentDescription = stringResource(id = R.string.history_correct),
             tint = Color.Green
         )
     } else {
         Icon(
             imageVector = Icons.Default.Clear,
-            contentDescription = "不正解",
+            contentDescription = stringResource(id = R.string.history_incorrect),
             tint = Color.Red
         )
     }

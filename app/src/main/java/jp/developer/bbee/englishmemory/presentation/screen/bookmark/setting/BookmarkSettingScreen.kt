@@ -28,6 +28,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -57,7 +58,7 @@ fun BookmarkSettingScreen(
     }
     BackHandler(enabled = !isLoading) { viewModel.saveBookmarkPreferences() }
 
-    val title = "Bookmark Setting"
+    val title = stringResource(id = R.string.bookmark_setting_title)
     CustomScaffold(
         title = title,
         navController = navController,
@@ -105,7 +106,7 @@ fun BookmarkSettingContent(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         imageVector = Icons.Default.Search,
-                        contentDescription = "検索"
+                        contentDescription = stringResource(id = R.string.bookmark_search),
                     )
                     Text(
                         text = SearchKey.SEARCH_WORD.displayName,
@@ -134,10 +135,10 @@ fun BookmarkSettingContent(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         painter = painterResource(R.drawable.ic_outline_filter_alt_24),
-                        contentDescription = "フィルター"
+                        contentDescription = stringResource(id = R.string.bookmark_filter)
                     )
                     Text(
-                        text = "重要単語ランク",
+                        text = stringResource(id = R.string.bookmark_importance),
                         style = MaterialTheme.typography.titleLarge,
                     )
                 }
@@ -161,10 +162,10 @@ fun BookmarkSettingContent(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         painter = painterResource(R.drawable.ic_outline_filter_alt_24),
-                        contentDescription = "フィルター"
+                        contentDescription = stringResource(id = R.string.bookmark_filter)
                     )
                     Text(
-                        text = "品詞",
+                        text = stringResource(id = R.string.bookmark_word_type),
                         style = MaterialTheme.typography.titleLarge,
                     )
                 }
@@ -206,10 +207,10 @@ fun BookmarkSettingContent(
                 Row(verticalAlignment = Alignment.CenterVertically) {
                     Icon(
                         painter = painterResource(R.drawable.ic_sort_24),
-                        contentDescription = "ソート"
+                        contentDescription = stringResource(id = R.string.bookmark_sort)
                     )
                     Text(
-                        text = "並び替え",
+                        text = stringResource(id = R.string.bookmark_order),
                         style = MaterialTheme.typography.titleLarge,
                     )
                 }
@@ -288,15 +289,15 @@ fun TextAndToggleIcon(
             when (order) {
                 Order.NONE -> Icon(
                     painter = painterResource(R.drawable.ic_horizontal_rule_24),
-                    contentDescription = "順不同"
+                    contentDescription = stringResource(id = R.string.bookmark_no_order)
                 )
                 Order.ASC -> Icon(
                     painter = painterResource(R.drawable.ic_arrow_upward_24),
-                    contentDescription = "昇順"
+                    contentDescription = stringResource(id = R.string.bookmark_ascending_order)
                 )
                 Order.DESC -> Icon(
                     painter = painterResource(R.drawable.ic_arrow_downward_24),
-                    contentDescription = "降順"
+                    contentDescription = stringResource(id = R.string.bookmark_descending_order)
                 )
             }
         }
