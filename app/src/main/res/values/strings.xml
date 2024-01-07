@@ -38,6 +38,7 @@
     <string name="score_number_of_questions">出題回数：</string>
     <string name="score_correct_answer_rate">正答率：</string>
     <string name="score_percent">%3.1f%%</string>
+    <string name="score_no_data">データがありません</string>
 
     <string name="bookmark_word">[%1$s] %2$s</string>
     <string name="bookmark_rate">正答率</string>
