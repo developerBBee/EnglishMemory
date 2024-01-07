@@ -19,9 +19,10 @@
 
     <string name="study_no_question">出題する問題がありません</string>
     <string name="study_word_type">[%s]</string>
-    <string name="study_weblio">"Weblioでこの単語を調べる",</string>
-    <string name="study_weblio_url">"https://ejje.weblio.jp/content/%s"</string>
+    <string name="study_weblio">Weblioでこの単語を調べる</string>
+    <string name="study_weblio_url">https://ejje.weblio.jp/content/%s</string>
     <string name="study_show_answer">正解を表示する</string>
+    <string name="study_bookmark">お気に入り登録</string>
     <string name="study_self_grading">自己採点</string>
     <string name="study_correct">正解</string>
     <string name="study_incorrect">不正解</string>

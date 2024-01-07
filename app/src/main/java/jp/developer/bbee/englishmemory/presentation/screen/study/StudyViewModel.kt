@@ -17,6 +17,7 @@ import jp.developer.bbee.englishmemory.domain.usecase.UpdateStudyStatusUseCase
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
+import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
@@ -54,6 +55,8 @@ class StudyViewModel @Inject constructor(
     private var _state = MutableStateFlow(StudyState(isLoading = true))
     val state = _state.asStateFlow()
 
+    private val _favoriteFlow = MutableStateFlow<Boolean?>(null)
+
     var isShowCorrect by mutableStateOf(false)
 
     val recent = getRecentUseCase().distinctUntilChanged()
@@ -79,6 +82,15 @@ class StudyViewModel @Inject constructor(
                     } else {
                         _state.value = StudyState(error = "出題できる問題がありません")
                     }
+                }
+            }.launchIn(viewModelScope)
+
+        _favoriteFlow.filterNotNull()
+            .onEach { isFavorite ->
+                _state.value.questionData?.let {
+                    _state.value = _state.value.copy(
+                        questionData = it.copy(isFavorite = isFavorite)
+                    )
                 }
             }.launchIn(viewModelScope)
     }
@@ -137,6 +149,16 @@ class StudyViewModel @Inject constructor(
         addRecent.updateRecentList(recentData).let {
             viewModelScope.launch {
                 updateRecentUseCase(it)
+            }
+        }
+    }
+
+    fun updateBookmarkStudyStatus(isFavorite: Boolean) {
+        state.value.questionData?.let {
+            viewModelScope.launch {
+                val studyStatus = it.toStudyStatus().copy(isFavorite = isFavorite)
+                updateStudyStatusUseCase(studyStatus)
+                _favoriteFlow.value = studyStatus.isFavorite
             }
         }
     }
