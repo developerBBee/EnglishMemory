@@ -17,8 +17,8 @@ android {
         applicationId = "jp.developer.bbee.englishmemory"
         minSdk = 26
         targetSdk = 34
-        versionCode = 1
-        versionName = "1.0"
+        versionCode = 2
+        versionName = "1.0.0"
 
         val baseUrl = System.getenv("AWS_BASE_URL") ?: run {
             val properties = Properties()
