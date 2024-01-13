@@ -14,10 +14,10 @@ import jp.developer.bbee.englishmemory.domain.usecase.GetRecentUseCase
 import jp.developer.bbee.englishmemory.domain.usecase.GetStudyDataUseCase
 import jp.developer.bbee.englishmemory.domain.usecase.UpdateRecentUseCase
 import jp.developer.bbee.englishmemory.domain.usecase.UpdateStudyStatusUseCase
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
-import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.flow.take
@@ -55,7 +55,7 @@ class StudyViewModel @Inject constructor(
     private var _state = MutableStateFlow(StudyState(isLoading = true))
     val state = _state.asStateFlow()
 
-    private val _favoriteFlow = MutableStateFlow<Boolean?>(null)
+    private val _favoriteFlow = MutableSharedFlow<Boolean>()
 
     var isShowCorrect by mutableStateOf(false)
 
@@ -85,7 +85,7 @@ class StudyViewModel @Inject constructor(
                 }
             }.launchIn(viewModelScope)
 
-        _favoriteFlow.filterNotNull()
+        _favoriteFlow
             .onEach { isFavorite ->
                 _state.value.questionData?.let {
                     _state.value = _state.value.copy(
@@ -158,7 +158,7 @@ class StudyViewModel @Inject constructor(
             viewModelScope.launch {
                 val studyStatus = it.toStudyStatus().copy(isFavorite = isFavorite)
                 updateStudyStatusUseCase(studyStatus)
-                _favoriteFlow.value = studyStatus.isFavorite
+                _favoriteFlow.emit(studyStatus.isFavorite)
             }
         }
     }
