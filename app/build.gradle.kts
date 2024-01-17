@@ -13,18 +13,20 @@ android {
     namespace = "jp.developer.bbee.englishmemory"
     compileSdk = 34
 
+    val properties = runCatching {
+        Properties().apply { load(rootProject.file("local.properties").inputStream()) }
+    }.onFailure {
+        println("The local.properties file was not found, but there is no problem with CI.\n${it.message}")
+    }.getOrDefault(Properties())
+
     defaultConfig {
         applicationId = "jp.developer.bbee.englishmemory"
         minSdk = 26
         targetSdk = 34
-        versionCode = 2
+        versionCode = 3
         versionName = "1.0.0"
 
-        val baseUrl = System.getenv("AWS_BASE_URL") ?: run {
-            val properties = Properties()
-            properties.load(project.rootProject.file("local.properties").inputStream())
-            properties.getProperty("baseUrl")
-        }
+        val baseUrl = getProp("AWS_BASE_URL", "baseUrl", properties)
         buildConfigField("String", "BASE_URL", "\"$baseUrl\"")
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -42,6 +44,20 @@ android {
         }
     }
 
+    // Encapsulates signing configurations.
+    signingConfigs {
+        // Creates a signing configuration called "release".
+        create("release") {
+            // Specifies the path to your keystore file.
+            storeFile = file("release.keystore")
+            // Specifies the password for your keystore.
+            storePassword = getProp("KEYSTORE_PASSWORD", "propStorePassword", properties)
+            // Specifies the identifying name for your key.
+            keyAlias = getProp("KEY_ALIAS", "propKeyAlias", properties)
+            // Specifies the password for your key.
+            keyPassword = getProp("KEY_PASSWORD", "propKeyPassword", properties)
+        }
+    }
     buildTypes {
         release {
             // Enables code shrinking, obfuscation, and optimization for only
@@ -59,6 +75,7 @@ android {
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = signingConfigs.getByName("release")
         }
     }
     compileOptions {
@@ -94,8 +111,8 @@ android {
 dependencies {
 
     implementation("androidx.core:core-ktx:1.12.0")
-    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.6.2")
-    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.6.2")
+    implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.7.0")
+    implementation("androidx.lifecycle:lifecycle-runtime-compose:2.7.0")
     implementation("androidx.activity:activity-compose:1.8.2")
     implementation(platform("androidx.compose:compose-bom:2023.10.01"))
     implementation("androidx.compose.ui:ui")
@@ -154,3 +171,7 @@ dependencies {
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest:1.5.4")
 }
+
+fun getProp(actionsKey: String, localKey: String, localProperties: Properties): String =
+    System.getenv(actionsKey) ?: run { localProperties.getProperty(localKey) }
+    ?: throw IllegalArgumentException("No $actionsKey or $localKey found")
