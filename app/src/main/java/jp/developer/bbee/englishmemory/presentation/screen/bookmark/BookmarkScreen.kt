@@ -1,5 +1,7 @@
 package jp.developer.bbee.englishmemory.presentation.screen.bookmark
 
+import androidx.compose.foundation.ExperimentalFoundationApi
+import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -30,6 +32,7 @@ import jp.developer.bbee.englishmemory.domain.model.StudyData
 import jp.developer.bbee.englishmemory.presentation.ScreenRoute
 import jp.developer.bbee.englishmemory.presentation.components.dialog.StudyDataDialog
 import jp.developer.bbee.englishmemory.presentation.components.modal.CustomScaffold
+import jp.developer.bbee.englishmemory.presentation.extentiions.noRippleClickable
 import jp.developer.bbee.englishmemory.presentation.ui.theme.AppTheme
 
 @Composable
@@ -75,6 +78,7 @@ fun BookmarkScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun BookmarkContent(
     navController: NavController,
@@ -85,11 +89,13 @@ fun BookmarkContent(
 
     Box(modifier = Modifier.fillMaxWidth()) {
         LazyColumn {
-            item {
+            stickyHeader {
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(vertical = AppTheme.dimens.small),
+                        .background(color = MaterialTheme.colorScheme.surface)
+                        .padding(vertical = AppTheme.dimens.small)
+                        .noRippleClickable {},
                     horizontalArrangement = Arrangement.End,
                     verticalAlignment = Alignment.CenterVertically
                 ) {
