@@ -37,6 +37,7 @@ import jp.developer.bbee.englishmemory.domain.model.History
 import jp.developer.bbee.englishmemory.presentation.ScreenRoute
 import jp.developer.bbee.englishmemory.presentation.components.dialog.StudyDataDialog
 import jp.developer.bbee.englishmemory.presentation.components.modal.CustomScaffold
+import jp.developer.bbee.englishmemory.presentation.extentiions.noRippleClickable
 import jp.developer.bbee.englishmemory.presentation.ui.theme.AppTheme
 import jp.developer.bbee.englishmemory.presentation.ui.theme.ForestGreen
 
@@ -95,7 +96,8 @@ fun HistoryContent(
                         modifier = Modifier
                             .fillMaxWidth()
                             .background(color = MaterialTheme.colorScheme.surface)
-                            .padding(AppTheme.dimens.medium),
+                            .padding(AppTheme.dimens.medium)
+                            .noRippleClickable {},
                         horizontalArrangement = Arrangement.Center,
                     ) {
                         Text(
