@@ -16,14 +16,14 @@ data class Result(
     val translateToJapanese: String,
     @Json(name = "WordType")
     val wordType: String
-) {
-    fun toTransLateData(): TranslateData {
-        return TranslateData(
-            english = english,
-            wordType = wordType,
-            translateToJapanese = translateToJapanese,
-            importance = importance,
-            registrationDateUTC = registrationDateUTC,
-        )
-    }
+)
+
+fun Result.toTranslateData(): TranslateData {
+    return TranslateData(
+        english = english,
+        wordType = wordType,
+        translateToJapanese = translateToJapanese,
+        importance = importance,
+        registrationDateUTC = registrationDateUTC,
+    )
 }

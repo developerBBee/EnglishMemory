@@ -10,10 +10,10 @@ data class TranslateDataDto(
     val message: String,
     @Json(name = "result")
     val results: List<Result>
-) {
-    fun toTransLateDataList(): List<TranslateData> {
-        return results.map {
-            it.toTransLateData()
-        }
+)
+
+fun TranslateDataDto.toTranslateDataList(): List<TranslateData> {
+    return results.map {
+        it.toTranslateData()
     }
 }

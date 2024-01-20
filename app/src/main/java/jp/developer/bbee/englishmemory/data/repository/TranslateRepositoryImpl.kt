@@ -2,6 +2,7 @@ package jp.developer.bbee.englishmemory.data.repository
 
 import jp.developer.bbee.englishmemory.data.source.local.EnglishMemoryDao
 import jp.developer.bbee.englishmemory.data.source.remote.api.AwsApi
+import jp.developer.bbee.englishmemory.data.source.remote.dto.toTranslateDataList
 import jp.developer.bbee.englishmemory.domain.model.History
 import jp.developer.bbee.englishmemory.domain.model.Recent
 import jp.developer.bbee.englishmemory.domain.model.StudyData
@@ -16,7 +17,7 @@ class TranslateRepositoryImpl @Inject constructor(
     private val dao: EnglishMemoryDao,
 ) : TranslateRepository {
     override suspend fun getTranslateData(token: String): List<TranslateData> {
-        return awsApi.getTranslateData(token).toTransLateDataList()
+        return awsApi.getTranslateData(token).toTranslateDataList()
     }
 
     override suspend fun getTranslateData(): List<TranslateData> {
