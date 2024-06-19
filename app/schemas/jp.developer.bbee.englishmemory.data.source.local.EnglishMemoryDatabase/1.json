@@ -1,0 +1,198 @@
+{
+  "formatVersion": 1,
+  "database": {
+    "version": 1,
+    "identityHash": "00bd8ba5cf463b8753e98627f1e81180",
+    "entities": [
+      {
+        "tableName": "TranslateData",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`english` TEXT NOT NULL, `wordType` TEXT NOT NULL, `translateToJapanese` TEXT NOT NULL, `importance` TEXT NOT NULL, `registrationDateUTC` TEXT NOT NULL, PRIMARY KEY(`english`, `wordType`))",
+        "fields": [
+          {
+            "fieldPath": "english",
+            "columnName": "english",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "wordType",
+            "columnName": "wordType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "translateToJapanese",
+            "columnName": "translateToJapanese",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "importance",
+            "columnName": "importance",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "registrationDateUTC",
+            "columnName": "registrationDateUTC",
+            "affinity": "TEXT",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "english",
+            "wordType"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "StudyStatus",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`english` TEXT NOT NULL, `wordType` TEXT NOT NULL, `numberOfQuestion` INTEGER NOT NULL, `scoreRate` REAL NOT NULL, `countMiss` INTEGER NOT NULL, `countCorrect` INTEGER NOT NULL, `isLatestAnswerCorrect` INTEGER NOT NULL, `isFavorite` INTEGER NOT NULL, PRIMARY KEY(`english`, `wordType`))",
+        "fields": [
+          {
+            "fieldPath": "english",
+            "columnName": "english",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "wordType",
+            "columnName": "wordType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "numberOfQuestion",
+            "columnName": "numberOfQuestion",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "scoreRate",
+            "columnName": "scoreRate",
+            "affinity": "REAL",
+            "notNull": true
+          },
+          {
+            "fieldPath": "countMiss",
+            "columnName": "countMiss",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "countCorrect",
+            "columnName": "countCorrect",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isLatestAnswerCorrect",
+            "columnName": "isLatestAnswerCorrect",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "isFavorite",
+            "columnName": "isFavorite",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "english",
+            "wordType"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "Recent",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`recentNumber` INTEGER NOT NULL, `english` TEXT NOT NULL, `wordType` TEXT NOT NULL, `correct` INTEGER NOT NULL, PRIMARY KEY(`recentNumber`))",
+        "fields": [
+          {
+            "fieldPath": "recentNumber",
+            "columnName": "recentNumber",
+            "affinity": "INTEGER",
+            "notNull": true
+          },
+          {
+            "fieldPath": "english",
+            "columnName": "english",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "wordType",
+            "columnName": "wordType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "correct",
+            "columnName": "correct",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "recentNumber"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      },
+      {
+        "tableName": "History",
+        "createSql": "CREATE TABLE IF NOT EXISTS `${TABLE_NAME}` (`studyDate` TEXT NOT NULL, `english` TEXT NOT NULL, `wordType` TEXT NOT NULL, `correct` INTEGER NOT NULL, PRIMARY KEY(`studyDate`))",
+        "fields": [
+          {
+            "fieldPath": "studyDate",
+            "columnName": "studyDate",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "english",
+            "columnName": "english",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "wordType",
+            "columnName": "wordType",
+            "affinity": "TEXT",
+            "notNull": true
+          },
+          {
+            "fieldPath": "correct",
+            "columnName": "correct",
+            "affinity": "INTEGER",
+            "notNull": true
+          }
+        ],
+        "primaryKey": {
+          "autoGenerate": false,
+          "columnNames": [
+            "studyDate"
+          ]
+        },
+        "indices": [],
+        "foreignKeys": []
+      }
+    ],
+    "views": [],
+    "setupQueries": [
+      "CREATE TABLE IF NOT EXISTS room_master_table (id INTEGER PRIMARY KEY,identity_hash TEXT)",
+      "INSERT OR REPLACE INTO room_master_table (id,identity_hash) VALUES(42, '00bd8ba5cf463b8753e98627f1e81180')"
+    ]
+  }
+}
