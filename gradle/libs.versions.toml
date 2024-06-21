@@ -3,7 +3,8 @@ agp = "8.5.0"
 kotlin = "2.0.0"
 ksp = "2.0.0-1.0.22"
 gms = "4.4.2"
-firebase = "3.0.2"
+crashlytics = "3.0.2"
+perf = "1.4.2"
 hilt = "2.50"
 
 coreKtx = "1.13.1"
@@ -11,7 +12,7 @@ lifecycleRuntimeKtx = "2.8.2"
 activityCompose = "1.9.0"
 composeBom = "2024.06.00"
 accompanistSystemuicontroller = "0.32.0"
-firebaseBom = "33.1.0"
+firebaseBom = "33.1.1"
 retrofit = "2.9.0"
 moshiKotlin = "1.15.0"
 room = "2.6.1"
@@ -41,6 +42,7 @@ firebase-bom = { group = "com.google.firebase", name = "firebase-bom", version.r
 firebase-crashlytics-ktx = { group = "com.google.firebase", name = "firebase-crashlytics-ktx" }
 firebase-analytics-ktx = { group = "com.google.firebase", name = "firebase-analytics-ktx" }
 firebase-auth-ktx = { group = "com.google.firebase", name = "firebase-auth-ktx" }
+firebase-perf-ktx = { group = "com.google.firebase", name = "firebase-perf-ktx" }
 retrofit = { group = "com.squareup.retrofit2", name = "retrofit", version.ref = "retrofit" }
 converter-moshi = { group = "com.squareup.retrofit2", name = "converter-moshi", version.ref = "retrofit" }
 moshi-kotlin = { group = "com.squareup.moshi", name = "moshi-kotlin", version.ref = "moshiKotlin" }
@@ -69,5 +71,6 @@ jetbrains-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = 
 compose-compiler = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 hilt-android = { id = "com.google.dagger.hilt.android", version.ref = "hilt" }
 gms = { id = "com.google.gms.google-services", version.ref = "gms" }
-firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "firebase" }
+firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
+firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "perf" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
