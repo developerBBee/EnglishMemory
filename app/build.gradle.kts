@@ -25,8 +25,8 @@ android {
         applicationId = "jp.developer.bbee.englishmemory"
         minSdk = 26
         targetSdk = 34
-        versionCode = 4
-        versionName = "1.0.1"
+        versionCode = 5
+        versionName = "1.0.2"
 
         val baseUrl = getProp("AWS_BASE_URL", "baseUrl", properties)
         buildConfigField("String", "BASE_URL", "\"$baseUrl\"")
@@ -38,6 +38,17 @@ android {
 
         ksp {
             arg("room.schemaLocation", "$projectDir/schemas")
+        }
+
+        ndkVersion = "27.0.11902837" //ここにNDKのバージョンを記入
+        //省略
+        buildTypes {
+            release {
+                //省略
+                ndk {
+                    debugSymbolLevel = "SYMBOL_TABLE"
+                }
+            }
         }
     }
 

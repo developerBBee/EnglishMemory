@@ -8,7 +8,7 @@ perf = "1.4.2"
 hilt = "2.50"
 
 coreKtx = "1.13.1"
-lifecycleRuntimeKtx = "2.8.2"
+lifecycleRuntimeKtx = "2.7.0" # https://issuetracker.google.com/issues/336842920
 activityCompose = "1.9.0"
 composeBom = "2024.06.00"
 accompanistSystemuicontroller = "0.32.0"
