@@ -16,6 +16,7 @@ import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -23,6 +24,8 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.text.TextStyle
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -47,20 +50,34 @@ fun TopScreen(
         drawerOpenEnabled = drawerOpenEnabled
     ) {
         TopContent(
-            state = state,
-            navController = navController,
-            viewModel = viewModel
+            isLoading = state.isLoading,
+            errorMessage = state.error,
+            isReady = viewModel.isReady,
+            isRestart = viewModel.isRestart,
+            restart = viewModel::restart,
+            navigate = navController::navigate,
         )
+    }
+
+    LaunchedEffect(key1 = viewModel.isRestart) {
+        if (viewModel.isRestart) {
+            navController.navigate(ScreenRoute.StartApp.route) {
+                popUpTo(navController.graph.id) {
+                    inclusive = true
+                }
+            }
+        }
     }
 }
 @Composable
 fun TopContent(
-    state: TopState,
-    navController: NavController,
-    viewModel: TopViewModel,
+    isLoading: Boolean,
+    errorMessage: String?,
+    isReady: Boolean,
+    isRestart: Boolean,
+    restart: () -> Unit,
+    navigate: (String) -> Unit,
 ) {
-    val errorMessage = state.error
-
     Box(modifier = Modifier.fillMaxSize()) {
         Column {
             Row(
@@ -94,46 +111,45 @@ fun TopContent(
                 MenuTextButton(
                     text = study,
                     style = MaterialTheme.typography.headlineLarge,
-                    enabled = viewModel.isReady
+                    enabled = isReady
                 ) {
-                    navController.navigate(ScreenRoute.StudyScreen.route)
+                    navigate(ScreenRoute.StudyScreen.route)
                 }
                 Spacer(modifier = Modifier.padding(AppTheme.dimens.small))
-                MenuTextButton(text = history, enabled = viewModel.isReady) {
-                    navController.navigate(ScreenRoute.HistoryScreen.route)
+                MenuTextButton(text = history, enabled = isReady) {
+                    navigate(ScreenRoute.HistoryScreen.route)
                 }
-                MenuTextButton(text = score, enabled = viewModel.isReady) {
-                    navController.navigate(ScreenRoute.ScoreScreen.route)
+                MenuTextButton(text = score, enabled = isReady) {
+                    navigate(ScreenRoute.ScoreScreen.route)
                 }
-                MenuTextButton(text = bookmark, enabled = viewModel.isReady) {
-                    navController.navigate(ScreenRoute.BookmarkScreen.route)
+                MenuTextButton(text = bookmark, enabled = isReady) {
+                    navigate(ScreenRoute.BookmarkScreen.route)
                 }
                 // TODO SettingScreen完成後に有効にする
-//                    MenuTextButton(text = "Setting", enabled = viewModel.isReady) {
-//                        navController.navigate(ScreenRoute.SettingScreen.route)
+//                    MenuTextButton(text = "Setting", enabled = isReady) {
+//                        navigate(ScreenRoute.SettingScreen.route)
 //                    }
             }
         }
-        if (viewModel.isRestart) {
-            navController.navigate(ScreenRoute.StartApp.route) {
-                popUpTo(navController.graph.id) {
-                    inclusive = true
-                }
-            }
+        if (isRestart) {
+            Box(modifier = Modifier.fillMaxSize())
         } else if (!errorMessage.isNullOrBlank()) {
             AlertDialog(
                 onDismissRequest = {},
                 confirmButton = {
-                    TextButton(
-                        onClick = { viewModel.restart() }) {
+                    TextButton(onClick = restart) {
                         Text(text = stringResource(id = R.string.top_restart))
                     }
                 },
                 text = { Text(text = errorMessage) }
             )
-        } else if (state.isLoading) {
+        } else if (isLoading) {
             Box(modifier = Modifier.fillMaxSize()) {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                CircularProgressIndicator(
+                    modifier = Modifier
+                        .align(Alignment.Center)
+                        .semantics { contentDescription = TopProgressDescription },
+                )
             }
         }
     }
@@ -156,3 +172,5 @@ fun MenuTextButton(
         )
     }
 }
+
+val TopProgressDescription = "TopCircularProgressIndicator"
