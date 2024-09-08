@@ -6,6 +6,7 @@ gms = "4.4.2"
 crashlytics = "3.0.2"
 perf = "1.4.2"
 hilt = "2.50"
+screenshot = "0.0.1-alpha06"
 
 coreKtx = "1.13.1"
 lifecycleRuntimeKtx = "2.7.0" # https://issuetracker.google.com/issues/336842920
@@ -74,3 +75,4 @@ gms = { id = "com.google.gms.google-services", version.ref = "gms" }
 firebase-crashlytics = { id = "com.google.firebase.crashlytics", version.ref = "crashlytics" }
 firebase-perf = { id = "com.google.firebase.firebase-perf", version.ref = "perf" }
 ksp = { id = "com.google.devtools.ksp", version.ref = "ksp" }
+screenshot = { id = "com.android.compose.screenshot", version.ref = "screenshot"}
