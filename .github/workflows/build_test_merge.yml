@@ -7,6 +7,10 @@ on:
 jobs:
   build_and_test:
     runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        api-level: [26, 34]
+        target: [default, google_apis]
 
     steps:
     - name: echos github.ref
@@ -42,6 +46,28 @@ jobs:
 
     - name: Test with Gradle
       run: ./gradlew test
+      env:
+        AWS_BASE_URL: ${{ secrets.AWS_BASE_URL }}
+        GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
+        KEYSTORE_PASSWORD: ${{ secrets.KEYSTORE_PASSWORD }}
+        KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
+        KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
+
+    # Use kernel virtual machine hardware acceleration
+    - name: Enable KVM group perms
+      run: |
+        echo 'KERNEL=="kvm", GROUP="kvm", MODE="0666", OPTIONS+="static_node=kvm"' | sudo tee /etc/udev/rules.d/99-kvm4all.rules
+        sudo udevadm control --reload-rules
+        sudo udevadm trigger --name-match=kvm
+
+    - name: Instrumentation Tests
+      uses: reactivecircus/android-emulator-runner@v2
+      with:
+        api-level: ${{ matrix.api-level }}
+        target: ${{ matrix.target }}
+        arch: x86_64
+        profile: Nexus 6
+        script: ./gradlew connectedCheck
       env:
         AWS_BASE_URL: ${{ secrets.AWS_BASE_URL }}
         GOOGLE_SERVICES_JSON: ${{ secrets.GOOGLE_SERVICES_JSON }}
