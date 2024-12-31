@@ -10,7 +10,6 @@ jobs:
     strategy:
       matrix:
         api-level: [26, 34]
-        target: [default, google_apis]
 
     steps:
     - name: echos github.ref
@@ -64,9 +63,9 @@ jobs:
       uses: reactivecircus/android-emulator-runner@v2
       with:
         api-level: ${{ matrix.api-level }}
-        target: ${{ matrix.target }}
+        target: default
         arch: x86_64
-        profile: Nexus 6
+        profile: pixel_6
         script: ./gradlew connectedCheck
       env:
         AWS_BASE_URL: ${{ secrets.AWS_BASE_URL }}
@@ -75,19 +74,12 @@ jobs:
         KEY_ALIAS: ${{ secrets.KEY_ALIAS }}
         KEY_PASSWORD: ${{ secrets.KEY_PASSWORD }}
 
-    - name: Archive debug test results
+    - name: Archive test results
       uses: actions/upload-artifact@v4
       if: always()
       with:
-        name: debug-test-results-${{ matrix.api-level }}-${{ matrix.target }}
-        path: app/build/reports/tests/testDebugUnitTest
-
-    - name: Archive release test results
-      uses: actions/upload-artifact@v4
-      if: always()
-      with:
-        name: release-test-results-${{ matrix.api-level }}-${{ matrix.target }}
-        path: app/build/reports/tests/testReleaseUnitTest
+        name: test-results-${{ matrix.api-level }}
+        path: app/build/reports
 
   merge:
     needs: build_and_test
